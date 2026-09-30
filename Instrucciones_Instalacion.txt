@@ -1,0 +1,115 @@
+Instrucciones de Instalación — Panadería "Delicias Dulces" ERP
+==============================================================
+
+Requisitos
+----------
+- Windows 10/11 con Docker Desktop (motor en ejecución) y Docker Compose v2.
+- PowerShell 5.1 o PowerShell 7.
+
+
+1. Política de ejecución (una sola vez por sesión)
+--------------------------------------------------
+Windows bloquea los .ps1 por defecto. En la sesión actual, sin elevación:
+
+    Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+
+Si el proyecto llegó como ZIP descargado del navegador (no como git clone):
+
+    Get-ChildItem .\scripts\*.ps1 | Unblock-File
+
+
+2. Arranque de un solo comando
+------------------------------
+Desde la raíz del repositorio (des-panaderia-erp):
+
+    .\scripts\docker-start.ps1
+
+Ese comando:
+  - crea .env desde .env.sample si no existe
+  - renderiza config/odoo.conf (inyecta la clave maestra)
+  - levanta PostgreSQL + Odoo
+  - espera a que ambos estén saludables
+  - reporta http://localhost:8069
+
+Antes de la entrega, edita .env y reemplaza los valores *_change_me
+(POSTGRES_PASSWORD y ODOO_ADMIN_PASSWD). Luego vuelve a ejecutar
+docker-start.ps1 para que Compose recree los contenedores.
+
+
+3. Primera base de datos / semilla de demostración
+--------------------------------------------------
+Con la pila ya en ejecución:
+
+    .\scripts\db-init-seed.ps1
+
+Si existe backups/seed_demo.dump, restaura el estado de demo
+(productos, ventas, facturas). Si no existe, instala el módulo
+panaderia y carga solo los datos maestros XML.
+
+
+4. Hoja de comandos del operador
+--------------------------------
+Ciclo de vida
+    .\scripts\docker-start.ps1              arrancar todo
+    .\scripts\docker-stop.ps1               detener, conservando datos
+    .\scripts\docker-restart.ps1            reiniciar Odoo
+    .\scripts\docker-restart.ps1 -Upgrade   aplicar cambios de Python
+    .\scripts\docker-restart.ps1 -Wait      reiniciar y esperar healthy
+    .\scripts\healthcheck.ps1               diagnóstico
+    .\scripts\docker-logs.ps1 -Follow       logs en vivo
+
+Base de datos
+    .\scripts\db-backup.ps1
+    .\scripts\db-backup.ps1 -IncludeFilestore
+    .\scripts\db-restore.ps1 -BackupFile .\backups\seed_demo.dump
+    .\scripts\db-init-seed.ps1
+
+Configuración
+    .\scripts\render-odoo-conf.ps1          regenerar config/odoo.conf
+
+DESTRUCTIVO — exige escribir BORRAR
+    .\scripts\docker-stop.ps1 -RemoveVolumes
+
+
+5. Qué comando usar según el cambio
+-----------------------------------
+Vista XML .................. nada (F5; dev_mode=xml)
+Modelo Python .............. .\scripts\docker-restart.ps1 -Upgrade
+__manifest__.py ............ .\scripts\docker-restart.ps1 -Upgrade
+odoo.conf.template ......... render-odoo-conf.ps1 + docker-start.ps1
+.env ....................... .\scripts\docker-start.ps1
+                             (restart NO relee .env)
+
+
+6. Puerto 8069 ocupado
+----------------------
+Edita .env:
+
+    ODOO_HTTP_PORT=8070
+
+Luego:
+
+    .\scripts\docker-start.ps1
+
+No hace falta tocar ningún archivo versionado.
+
+
+7. Nunca hagas esto
+-------------------
+    docker compose down -v
+
+Borra los volúmenes y todos los datos. Si ocurre por accidente:
+
+    .\scripts\docker-start.ps1
+    .\scripts\db-init-seed.ps1
+
+
+8. Limpieza de respaldos locales
+--------------------------------
+Los volcados en backups/ (excepto seed_demo.*) no se versionan.
+Para conservar solo los 5 más recientes:
+
+    Get-ChildItem .\backups\panaderia_backup_*.dump |
+      Sort-Object LastWriteTime -Descending |
+      Select-Object -Skip 5 |
+      Remove-Item
