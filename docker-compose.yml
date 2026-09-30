@@ -1,0 +1,85 @@
+# ==========================================================================
+# Panadería "Delicias Dulces" ERP — Pila de servicios local (SPEC-0.1.1)
+# --------------------------------------------------------------------------
+# La clave `version:` se OMITE a propósito: está obsoleta en la Especificación
+# Compose y Compose v2 emite una advertencia en cada invocación.
+# Toda credencial y todo puerto se interpolan desde `.env` (ver `.env.sample`).
+# ==========================================================================
+
+networks:
+  panaderia-net:
+    name: panaderia-net
+    driver: bridge
+
+volumes:
+  odoo-db-data:
+    name: panaderia_odoo_db_data
+  odoo-web-data:
+    name: panaderia_odoo_web_data
+
+services:
+
+  # ------------------------------------------------------------------------
+  # Base de datos PostgreSQL
+  # No publica NINGÚN puerto en el host: el aislamiento del puerto 5432 es la
+  # invariante verificada por el Escenario de Aceptación 3.
+  # ------------------------------------------------------------------------
+  db:
+    image: postgres:15-alpine
+    container_name: panaderia_odoo_db
+    restart: unless-stopped
+    networks:
+      - panaderia-net
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-postgres}
+      POSTGRES_USER: ${POSTGRES_USER:-odoo}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-odoo_dev_password}
+      # PGDATA anidado: `initdb` falla si su directorio destino no está vacío,
+      # y el punto de montaje de un volumen de Docker contiene `lost+found`.
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      # Montado en la ruta ANIDADA de PGDATA, no en /var/lib/postgresql/data.
+      - odoo-db-data:/var/lib/postgresql/data/pgdata
+    # Depuración opcional con pgAdmin/DBeaver. Descomentar SOLO si se necesita:
+    # queda ligado a loopback, nunca expuesto a la red local.
+    # ports:
+    #   - "127.0.0.1:5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-odoo} -d ${POSTGRES_DB:-postgres}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # ------------------------------------------------------------------------
+  # Servidor de aplicaciones Odoo
+  # ------------------------------------------------------------------------
+  web:
+    image: odoo:16.0
+    container_name: panaderia_odoo_web
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - panaderia-net
+    ports:
+      - "${ODOO_HTTP_PORT:-8069}:8069"
+      - "${ODOO_CHAT_PORT:-8072}:8072"
+    environment:
+      HOST: db
+      PORT: 5432
+      USER: ${POSTGRES_USER:-odoo}
+      PASSWORD: ${POSTGRES_PASSWORD:-odoo_dev_password}
+    volumes:
+      - odoo-web-data:/var/lib/odoo
+      - ./config:/etc/odoo
+      # El módulo se monta como HIJO de /mnt/extra-addons, por lo que
+      # `addons_path` debe nombrar al PADRE. Ver SPEC-0.1.2.
+      - ./Modulo_Odoo:/mnt/extra-addons/panaderia
+    healthcheck:
+      # `python3` viene en la imagen oficial; `curl` y `wget` NO.
+      test: ["CMD-SHELL", "python3 -c \"import urllib.request; urllib.request.urlopen('http://localhost:8069/web/login', timeout=5)\""]
+      interval: 10s
+      timeout: 10s
+      retries: 6
+      start_period: 60s
