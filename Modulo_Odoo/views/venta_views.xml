@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Tree View: Órdenes de Venta -->
+    <record id="view_panaderia_venta_tree" model="ir.ui.view">
+        <field name="name">panaderia.venta.tree</field>
+        <field name="model">panaderia.venta</field>
+        <field name="arch" type="xml">
+            <tree string="Órdenes de Venta"
+                  decoration-info="state == 'draft'"
+                  decoration-success="state == 'confirmed'"
+                  decoration-muted="state == 'cancelled'">
+                <field name="name" string="Folio" decoration-bf="1"/>
+                <field name="fecha" string="Fecha"/>
+                <field name="cliente_id" string="Cliente"/>
+                <field name="total" string="Total ($)" sum="Total Ventas" widget="monetary" decoration-bf="1"/>
+                <field name="state" string="Estado" widget="badge"
+                       decoration-info="state == 'draft'"
+                       decoration-success="state == 'confirmed'"
+                       decoration-danger="state == 'cancelled'"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Form View: Órdenes de Venta -->
+    <record id="view_panaderia_venta_form" model="ir.ui.view">
+        <field name="name">panaderia.venta.form</field>
+        <field name="model">panaderia.venta</field>
+        <field name="arch" type="xml">
+            <form string="Orden de Venta de Panadería">
+                <header>
+                    <button name="action_confirm" string="Confirmar Venta" type="object"
+                            class="oe_highlight" states="draft"/>
+                    <button name="action_cancel" string="Cancelar" type="object"
+                            states="draft,confirmed" confirm="¿Está seguro de que desea cancelar esta orden de venta?"/>
+                    <button name="action_draft" string="Volver a Borrador" type="object"
+                            states="cancelled"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,cancelled"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_factura" type="object" class="oe_stat_button"
+                                icon="fa-pencil-square-o" attrs="{'invisible': [('factura_id', '=', False)]}">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">Factura</span>
+                            </div>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <span class="o_form_label">Orden de Venta</span>
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Información de la Venta">
+                            <field name="cliente_id" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                            <field name="fecha" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                        </group>
+                        <group string="Documento y Comprobante">
+                            <field name="factura_id" readonly="1" attrs="{'invisible': [('factura_id', '=', False)]}"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Líneas de la Venta" name="lineas_venta">
+                            <field name="linea_ids" attrs="{'readonly': [('state', '!=', 'draft')]}">
+                                <tree string="Detalle de Productos" editable="bottom">
+                                    <field name="producto_id" options="{'no_create_edit': False}"/>
+                                    <field name="cantidad"/>
+                                    <field name="precio_unitario" widget="monetary"/>
+                                    <field name="subtotal" sum="Total de Líneas" widget="monetary" readonly="1"/>
+                                </tree>
+                            </field>
+                            <group class="oe_subtotal_footer oe_right">
+                                <field name="total" class="oe_subtotal_footer_separator" widget="monetary" readonly="1"/>
+                            </group>
+                            <div class="oe_clear"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search View: Órdenes de Venta -->
+    <record id="view_panaderia_venta_search" model="ir.ui.view">
+        <field name="name">panaderia.venta.search</field>
+        <field name="model">panaderia.venta</field>
+        <field name="arch" type="xml">
+            <search string="Buscar Órdenes de Venta">
+                <field name="name" string="Folio" filter_domain="[('name', 'ilike', self)]"/>
+                <field name="cliente_id" string="Cliente"/>
+                <separator/>
+                <filter string="Borrador" name="filter_draft" domain="[('state', '=', 'draft')]"/>
+                <filter string="Confirmadas" name="filter_confirmed" domain="[('state', '=', 'confirmed')]"/>
+                <filter string="Canceladas" name="filter_cancelled" domain="[('state', '=', 'cancelled')]"/>
+                <group expand="0" string="Agrupar Por">
+                    <filter string="Cliente" name="group_by_cliente" context="{'group_by': 'cliente_id'}"/>
+                    <filter string="Estado" name="group_by_state" context="{'group_by': 'state'}"/>
+                    <filter string="Fecha" name="group_by_fecha" context="{'group_by': 'fecha:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Window Action: Órdenes de Venta -->
+    <record id="action_panaderia_venta" model="ir.actions.act_window">
+        <field name="name">Órdenes de Venta</field>
+        <field name="res_model">panaderia.venta</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_panaderia_venta_search"/>
+        <field name="context">{'search_default_filter_confirmed': 0}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                ¡Registra tu primera orden de venta de panadería!
+            </p>
+            <p>
+                Selecciona al cliente, agrega los productos con sus cantidades y confirma la venta para descontar existencias de inventario.
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu Hierarchy -->
+    <!-- Parent Menu: Ventas -->
+    <menuitem id="menu_panaderia_ventas_root"
+              name="Ventas"
+              parent="menu_panaderia_root"
+              sequence="20"/>
+
+    <!-- Action Menu: Órdenes de Venta -->
+    <menuitem id="menu_panaderia_venta_ordenes"
+              name="Órdenes de Venta"
+              parent="menu_panaderia_ventas_root"
+              action="action_panaderia_venta"
+              sequence="10"/>
+</odoo>
