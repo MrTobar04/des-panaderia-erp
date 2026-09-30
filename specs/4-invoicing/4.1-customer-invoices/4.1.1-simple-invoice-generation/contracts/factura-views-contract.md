@@ -1,0 +1,198 @@
+# UI & Views Contract: Generación de Facturas Simples
+
+**Feature**: `SPEC-4.1.1: Generación de Facturas Simples`  
+**Target File**: `Modulo_Odoo/views/factura_views.xml`  
+**Manifest Registration**: `Modulo_Odoo/__manifest__.py`  
+
+---
+
+## 1. Views Structure & Specification
+
+### 1.1. Form View (`view_panaderia_factura_form`)
+
+* **ID**: `view_panaderia_factura_form`
+* **Model**: `panaderia.factura`
+* **Layout Specification**:
+  ```xml
+  <record id="view_panaderia_factura_form" model="ir.ui.view">
+      <field name="name">panaderia.factura.form</field>
+      <field name="model">panaderia.factura</field>
+      <field name="arch" type="xml">
+          <form string="Factura de Panadería">
+              <header>
+                  <!-- Botón Registrar Pago -->
+                  <button name="action_register_payment"
+                          string="Registrar Pago"
+                          type="object"
+                          class="oe_highlight"
+                          attrs="{'invisible': [('state', '!=', 'pending')]}"/>
+
+                  <!-- Botón Cancelar Factura -->
+                  <button name="action_cancel"
+                          string="Cancelar Factura"
+                          type="object"
+                          attrs="{'invisible': [('state', '!=', 'pending')]}"
+                          confirm="¿Está seguro de que desea cancelar esta factura?"/>
+
+                  <!-- Barra de estado -->
+                  <field name="state" widget="statusbar" statusbar_visible="pending,paid"/>
+              </header>
+              <sheet>
+                  <div class="oe_button_box" name="button_box">
+                      <!-- Smart Button: Ver Venta Origen -->
+                      <button name="action_view_venta"
+                              type="object"
+                              class="oe_stat_button"
+                              icon="fa-shopping-cart"
+                              attrs="{'invisible': [('venta_id', '=', False)]}">
+                          <div class="o_stat_info">
+                              <span class="o_stat_text">Ver Orden</span>
+                              <span class="o_stat_text">de Venta</span>
+                          </div>
+                      </button>
+                  </div>
+                  <div class="oe_title">
+                      <h1>
+                          <field name="name" readonly="1"/>
+                      </h1>
+                  </div>
+                  <group>
+                      <group string="Datos del Comprobante">
+                          <field name="cliente_id" attrs="{'readonly': [('state', 'in', ('paid', 'cancelled'))]}"/>
+                          <field name="fecha_emision" attrs="{'readonly': [('state', 'in', ('paid', 'cancelled'))]}"/>
+                          <field name="fecha_pago" readonly="1" attrs="{'invisible': [('state', '!=', 'paid')]}"/>
+                          <field name="venta_id" readonly="1"/>
+                      </group>
+                      <group string="Detalles de Cobro">
+                          <field name="monto_total" attrs="{'readonly': [('state', 'in', ('paid', 'cancelled'))]}"/>
+                          <field name="metodo_pago" attrs="{'readonly': [('state', 'in', ('paid', 'cancelled'))]}"/>
+                      </group>
+                  </group>
+              </sheet>
+          </form>
+      </field>
+  </record>
+  ```
+
+---
+
+### 1.2. Tree / List View (`view_panaderia_factura_tree`)
+
+* **ID**: `view_panaderia_factura_tree`
+* **Model**: `panaderia.factura`
+* **Layout Specification**:
+  ```xml
+  <record id="view_panaderia_factura_tree" model="ir.ui.view">
+      <field name="name">panaderia.factura.tree</field>
+      <field name="model">panaderia.factura</field>
+      <field name="arch" type="xml">
+          <tree string="Facturas de Panadería"
+                decoration-warning="state == 'pending'"
+                decoration-success="state == 'paid'"
+                decoration-muted="state == 'cancelled'">
+              <field name="name"/>
+              <field name="fecha_emision"/>
+              <field name="cliente_id"/>
+              <field name="venta_id" optional="show"/>
+              <field name="metodo_pago"/>
+              <field name="monto_total" sum="Total Facturado"/>
+              <field name="fecha_pago" optional="hide"/>
+              <field name="state" widget="badge"
+                     decoration-warning="state == 'pending'"
+                     decoration-success="state == 'paid'"
+                     decoration-danger="state == 'cancelled'"/>
+          </tree>
+      </field>
+  </record>
+  ```
+
+---
+
+### 1.3. Search & Filter View (`view_panaderia_factura_search`)
+
+* **ID**: `view_panaderia_factura_search`
+* **Model**: `panaderia.factura`
+* **Layout Specification**:
+  ```xml
+  <record id="view_panaderia_factura_search" model="ir.ui.view">
+      <field name="name">panaderia.factura.search</field>
+      <field name="model">panaderia.factura</field>
+      <field name="arch" type="xml">
+          <search string="Buscar Facturas">
+              <field name="name" string="Número" filter_domain="[('name', 'ilike', self)]"/>
+              <field name="cliente_id" string="Cliente"/>
+              <field name="venta_id" string="Orden de Venta"/>
+              <separator/>
+              <filter string="Pendientes de Pago" name="filter_pending" domain="[('state', '=', 'pending')]"/>
+              <filter string="Pagadas" name="filter_paid" domain="[('state', '=', 'paid')]"/>
+              <filter string="Canceladas" name="filter_cancelled" domain="[('state', '=', 'cancelled')]"/>
+              <separator/>
+              <filter string="Emitidas Hoy" name="filter_today"
+                      domain="[('fecha_emision', '&gt;=', context_today().strftime('%Y-%m-%d 00:00:00')), ('fecha_emision', '&lt;=', context_today().strftime('%Y-%m-%d 23:59:59'))]"/>
+              <group expand="0" string="Agrupar Por">
+                  <filter string="Cliente" name="group_by_cliente" context="{'group_by': 'cliente_id'}"/>
+                  <filter string="Estado de Pago" name="group_by_state" context="{'group_by': 'state'}"/>
+                  <filter string="Método de Pago" name="group_by_metodo" context="{'group_by': 'metodo_pago'}"/>
+                  <filter string="Fecha de Emisión" name="group_by_fecha" context="{'group_by': 'fecha_emision:day'}"/>
+              </group>
+          </search>
+      </field>
+  </record>
+  ```
+
+---
+
+## 2. Window Action & Navigation Menus
+
+```xml
+<!-- Window Action -->
+<record id="action_panaderia_factura" model="ir.actions.act_window">
+    <field name="name">Facturas</field>
+    <field name="res_model">panaderia.factura</field>
+    <field name="view_mode">tree,form</field>
+    <field name="search_view_id" ref="view_panaderia_factura_search"/>
+    <field name="context">{'search_default_filter_pending': 1}</field>
+    <field name="help" type="html">
+        <p class="o_view_nocontent_smiling_face">
+            ¡Sin facturas registradas!
+        </p>
+        <p>
+            Las facturas se generan automáticamente al confirmar una orden de venta en mostrador o pueden emitirse manualmente.
+        </p>
+    </field>
+</record>
+
+<!-- Menu Structure -->
+<!-- Facturación Submenu under Panadería Root -->
+<menuitem id="menu_panaderia_facturacion_root"
+          name="Facturación"
+          parent="menu_panaderia_root"
+          sequence="30"/>
+
+<!-- Facturas Action Menu -->
+<menuitem id="menu_panaderia_factura_list"
+          name="Facturas de Clientes"
+          parent="menu_panaderia_facturacion_root"
+          action="action_panaderia_factura"
+          sequence="10"/>
+```
+
+---
+
+## 3. Manifest Declaration Contract
+
+In `Modulo_Odoo/__manifest__.py`:
+```python
+    'data': [
+        'security/security.xml',
+        'security/ir.model.access.csv',
+        'data/categoria_data.xml',
+        'data/producto_data.xml',
+        'data/venta_sequence.xml',
+        'data/factura_sequence.xml',   # New: Sequence definition
+        'views/categoria_views.xml',
+        'views/producto_views.xml',
+        'views/venta_views.xml',
+        'views/factura_views.xml',     # New: Views and menus
+    ],
+```
