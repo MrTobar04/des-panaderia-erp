@@ -55,6 +55,13 @@ class PanaderiaProducto(models.Model):
         digits=(5, 2),
         help='Margen de ganancia porcentual sobre el precio de venta.'
     )
+    cantidad_disponible = fields.Float(
+        string='Stock Disponible',
+        default=0.0,
+        required=True,
+        digits=(10, 2),
+        help='Cantidad física de unidades disponibles en la panadería.'
+    )
     active = fields.Boolean(
         string='Activo',
         default=True,
