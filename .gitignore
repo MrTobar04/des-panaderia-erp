@@ -43,6 +43,6 @@ venv/
 ENV/
 
 # Docker persistent data
-data/
+/data/
 odoo-db-data/
 odoo-web-data/

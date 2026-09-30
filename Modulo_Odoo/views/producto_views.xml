@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Tree View: Productos -->
+    <record id="view_panaderia_producto_tree" model="ir.ui.view">
+        <field name="name">panaderia.producto.tree</field>
+        <field name="model">panaderia.producto</field>
+        <field name="arch" type="xml">
+            <tree string="Catálogo de Productos de Panadería" decoration-muted="not active">
+                <field name="codigo" string="SKU / Código" optional="show"/>
+                <field name="name" string="Nombre del Producto" decoration-bf="1"/>
+                <field name="categoria_id" string="Categoría" widget="badge"/>
+                <field name="costo" string="Costo ($)" widget="monetary" options="{'currency_field': 'currency_id'}" optional="show"/>
+                <field name="precio_venta" string="Precio Venta ($)" widget="monetary" decoration-bf="1"/>
+                <field name="margen_bruto" string="Margen ($)" widget="monetary" optional="show"/>
+                <field name="porcentaje_margen" string="% Margen" widget="percentage" optional="show"/>
+                <field name="active" widget="boolean_toggle"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Form View: Productos -->
+    <record id="view_panaderia_producto_form" model="ir.ui.view">
+        <field name="name">panaderia.producto.form</field>
+        <field name="model">panaderia.producto</field>
+        <field name="arch" type="xml">
+            <form string="Producto de Panadería">
+                <sheet>
+                    <widget name="web_ribbon" title="Archivado" bg_color="bg-danger" attrs="{'invisible': [('active', '=', True)]}"/>
+                    <div class="oe_title">
+                        <label for="name" class="oe_edit_only" string="Nombre del Producto"/>
+                        <h1>
+                            <field name="name" placeholder="e.g. Pan Francés Tradicional"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Información de Catálogo">
+                            <field name="codigo" placeholder="e.g. PAN-001"/>
+                            <field name="categoria_id" options="{'no_create_edit': False}"/>
+                            <field name="active" widget="boolean_toggle"/>
+                        </group>
+                        <group string="Estructura Comercial y Costos">
+                            <field name="costo" widget="monetary" placeholder="0.00"/>
+                            <field name="precio_venta" widget="monetary" placeholder="0.00"/>
+                            <field name="margen_bruto" readonly="1" widget="monetary"/>
+                            <field name="porcentaje_margen" readonly="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Descripción e Ingredientes">
+                            <field name="descripcion" placeholder="Ingredientes, alérgenos, presentación comercial o notas de preparación..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search View: Productos -->
+    <record id="view_panaderia_producto_search" model="ir.ui.view">
+        <field name="name">panaderia.producto.search</field>
+        <field name="model">panaderia.producto</field>
+        <field name="arch" type="xml">
+            <search string="Buscar Productos de Panadería">
+                <field name="name" string="Nombre del Producto" filter_domain="[('name', 'ilike', self)]"/>
+                <field name="codigo" string="Código / SKU" filter_domain="[('codigo', 'ilike', self)]"/>
+                <field name="categoria_id" string="Categoría"/>
+                <separator/>
+                <filter string="Activos" name="filter_active" domain="[('active', '=', True)]"/>
+                <filter string="Archivados" name="filter_archived" domain="[('active', '=', False)]"/>
+                <group expand="0" string="Agrupar Por">
+                    <filter string="Categoría" name="group_by_categoria" context="{'group_by': 'categoria_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action: Productos -->
+    <record id="action_panaderia_producto" model="ir.actions.act_window">
+        <field name="name">Catálogo de Productos</field>
+        <field name="res_model">panaderia.producto</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_panaderia_producto_search"/>
+        <field name="context">{'search_default_filter_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                ¡Registra tu primer producto de panadería!
+            </p>
+            <p>
+                Define los productos, asigna sus categorías y fija los precios de venta y costos de producción.
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu Hierarchy -->
+    <!-- Top-level Application Menu -->
+    <menuitem id="menu_panaderia_root"
+              name="Panadería"
+              sequence="10"
+              web_icon="Modulo_Odoo,static/description/icon.png"/>
+
+    <!-- Parent Section: Inventario -->
+    <menuitem id="menu_panaderia_inventario"
+              name="Inventario"
+              parent="menu_panaderia_root"
+              sequence="10"/>
+
+    <!-- Action Menu: Productos -->
+    <menuitem id="menu_panaderia_producto"
+              name="Productos"
+              parent="menu_panaderia_inventario"
+              action="action_panaderia_producto"
+              sequence="10"/>
+
+    <!-- Action Menu: Categorías -->
+    <menuitem id="menu_panaderia_categoria_menu"
+              name="Categorías"
+              parent="menu_panaderia_inventario"
+              action="action_panaderia_categoria"
+              sequence="20"/>
+</odoo>
