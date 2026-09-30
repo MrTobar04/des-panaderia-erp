@@ -1,0 +1,35 @@
+# Build context hygiene. The official images are used unmodified;
+# this file exists so a future Dockerfile does not copy secrets or caches.
+
+.git
+.specify
+.cursor
+
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+
+config/odoo.conf
+
+backups/*
+!backups/.gitkeep
+!backups/seed_demo.dump
+!backups/seed_demo_filestore.tar
+
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv
+venv/
+.coverage
+htmlcov/
+
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+*.swp

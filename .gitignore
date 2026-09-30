@@ -46,3 +46,17 @@ ENV/
 /data/
 odoo-db-data/
 odoo-web-data/
+
+# Configuración de Odoo renderizada (contiene la clave maestra inyectada)
+config/odoo.conf
+!config/odoo.conf.template
+
+# Respaldos de base de datos (SPEC-0.2.1)
+# Contienen datos de negocio: NO se versionan.
+# Se usa `backups/*` y no `backups/`: Git no puede re-incluir un archivo con `!`
+# si uno de sus directorios padre está excluido.
+backups/*
+# Excepciones: marcador de directorio y semilla sintética de demostración.
+!backups/.gitkeep
+!backups/seed_demo.dump
+!backups/seed_demo_filestore.tar

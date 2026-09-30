@@ -1,0 +1,76 @@
+[options]
+; ==========================================================================
+; Panadería "Delicias Dulces" ERP — Configuración del Servidor Odoo
+; --------------------------------------------------------------------------
+; Este archivo es una PLANTILLA versionada en Git. NO contiene secretos.
+; `scripts/render-odoo-conf.ps1` lo renderiza a `config/odoo.conf`
+; sustituyendo ${ODOO_ADMIN_PASSWD} desde `.env` (SPEC-0.1.1).
+; El archivo renderizado está excluido de Git.
+; ==========================================================================
+
+; --- Rutas de Addons ---
+; CRÍTICO: debe apuntar al directorio PADRE del módulo montado.
+; El bind-mount es ./Modulo_Odoo -> /mnt/extra-addons/panaderia, por lo que
+; Odoo debe escanear /mnt/extra-addons para descubrir el módulo `panaderia`.
+; Apuntar esta clave al directorio del módulo lo vuelve INDETECTABLE: Odoo
+; enumera los HIJOS de cada ruta buscando __manifest__.py.
+; La ruta del núcleo es obligatoria: sin ella el módulo `base` no carga.
+addons_path = /mnt/extra-addons,/usr/lib/python3/dist-packages/odoo/addons
+
+; --- Directorio de datos y filestore ---
+; Respaldado por el volumen con nombre panaderia_odoo_web_data.
+data_dir = /var/lib/odoo
+
+; --- Clave maestra del Gestor de Bases de Datos ---
+; Inyectada en tiempo de ejecución desde .env. Odoo la convierte
+; automáticamente a un hash pbkdf2_sha512 en el primer uso exitoso.
+admin_passwd = ${ODOO_ADMIN_PASSWD}
+
+; --- Modo desarrollador y recarga en caliente ---
+; xml   -> recarga vistas XML desde disco al recargar el navegador (F5)
+; qweb  -> diagnóstico de renderizado de plantillas QWeb
+; reload-> reinicio automático ante cambios en Python (requiere watchdog,
+;          ausente en la imagen oficial: usar `-u panaderia` en su lugar)
+; werkzeug se OMITE a propósito: expone trazas completas por HTTP.
+dev_mode = reload,qweb,xml
+
+; --- Gestión de base de datos ---
+; list_db debe permanecer en True: el selector y el gestor de bases de datos
+; son necesarios para el Escenario de Aceptación 2.
+list_db = True
+db_maxconn = 32
+
+; --- Parámetros de logs ---
+; Piso global en INFO para mantener legible el arranque durante la defensa;
+; solo el módulo de panadería se eleva a DEBUG.
+log_level = info
+log_handler = :INFO,odoo.addons.panaderia:DEBUG
+
+; --- Límites de memoria y tiempo ---
+; NOTA: Odoo solo aplica estos límites en modo prefork (workers > 0).
+; Esta pila corre en modo threaded (workers = 0), por lo que quedan
+; declarados como intención y NO se aplican en tiempo de ejecución.
+limit_memory_soft = 2147483648
+limit_memory_hard = 2684354560
+limit_time_cpu = 120
+limit_time_real = 240
+
+; --- Conexión a la base de datos ---
+; Estas claves son OBLIGATORIAS, no opcionales. El plan original las omitía
+; asumiendo que bastaban las variables HOST/USER/PASSWORD del contenedor, pero
+; quien las traduce a argumentos `--db_host` es `/entrypoint.sh`, y
+; `docker compose exec web odoo ...` NO pasa por el entrypoint. Sin estas
+; claves, toda invocación de la CLI (`-i panaderia`, `-u panaderia`) falla
+; intentando abrir un socket Unix local inexistente.
+; El entrypoint da prioridad al archivo, así que los valores aquí y en .env
+; son idénticos y no hay divergencia posible.
+db_host = db
+db_port = 5432
+db_user = ${POSTGRES_USER}
+db_password = ${POSTGRES_PASSWORD}
+
+; --- Claves deliberadamente ausentes ---
+; workers: se deja en el valor por defecto 0 (modo threaded).
+; db_name / dbfilter: fijarían el servidor a una sola base de datos y
+; ocultarían el selector, rompiendo el Escenario de Aceptación 2.
+; smtp_*: fuera de alcance.
