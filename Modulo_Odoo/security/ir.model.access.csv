@@ -3,3 +3,9 @@ access_panaderia_categoria_user,panaderia.categoria.user,model_panaderia_categor
 access_panaderia_categoria_manager,panaderia.categoria.manager,model_panaderia_categoria,group_panaderia_manager,1,1,1,1
 access_panaderia_producto_user,panaderia.producto.user,model_panaderia_producto,group_panaderia_user,1,1,1,0
 access_panaderia_producto_manager,panaderia.producto.manager,model_panaderia_producto,group_panaderia_manager,1,1,1,1
+access_panaderia_venta_user,panaderia.venta.user,model_panaderia_venta,group_panaderia_user,1,1,1,0
+access_panaderia_venta_manager,panaderia.venta.manager,model_panaderia_venta,group_panaderia_manager,1,1,1,1
+access_panaderia_venta_linea_user,panaderia.venta.linea.user,model_panaderia_venta_linea,group_panaderia_user,1,1,1,1
+access_panaderia_venta_linea_manager,panaderia.venta.linea.manager,model_panaderia_venta_linea,group_panaderia_manager,1,1,1,1
+access_panaderia_factura_user,panaderia.factura.user,model_panaderia_factura,group_panaderia_user,1,1,1,0
+access_panaderia_factura_manager,panaderia.factura.manager,model_panaderia_factura,group_panaderia_manager,1,1,1,1
