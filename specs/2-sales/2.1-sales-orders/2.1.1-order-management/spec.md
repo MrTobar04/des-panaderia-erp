@@ -130,8 +130,8 @@ Implementar el módulo de ventas en Odoo para la panadería "Delicias Dulces", p
 * Reglas de acceso en `Modulo_Odoo/security/ir.model.access.csv`.
 
 ## 10. Definition of Done (DoD)
-* [ ] Modelos `panaderia.venta` y `panaderia.venta.linea` completamente funcionales.
-* [ ] Secuencia automática de folios `VEN-XXXX` operativa.
-* [ ] Descuento atómico de existencias verificado en inventario.
-* [ ] Creación automática de factura vinculada al confirmar.
-* [ ] Procedimiento de prueba `docs/test-procedures/test-procedure-2.1.1.md` documentado y verificado.
+* [x] Modelos `panaderia.venta` y `panaderia.venta.linea` completamente funcionales.
+* [x] Secuencia automática de folios `VEN-XXXX` operativa.
+* [x] Descuento atómico de existencias verificado en inventario.
+* [x] Creación automática de factura vinculada al confirmar.
+* [x] Procedimiento de prueba `docs/test-procedures/test-procedure-2.1.1.md` documentado y verificado.
