@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Seed Category: Pan -->
+        <record id="categoria_pan" model="panaderia.categoria">
+            <field name="name">Pan</field>
+            <field name="codigo">PAN</field>
+            <field name="descripcion">Variedad de panes tradicionales, dulces, rústicos y artesanales.</field>
+            <field name="active">True</field>
+        </record>
+
+        <!-- Seed Category: Pastel -->
+        <record id="categoria_pastel" model="panaderia.categoria">
+            <field name="name">Pastel</field>
+            <field name="codigo">PAS</field>
+            <field name="descripcion">Pasteles para eventos, porciones individuales, postres fríos y tartas.</field>
+            <field name="active">True</field>
+        </record>
+
+        <!-- Seed Category: Galleta -->
+        <record id="categoria_galleta" model="panaderia.categoria">
+            <field name="name">Galleta</field>
+            <field name="codigo">GAL</field>
+            <field name="descripcion">Galletas horneadas, polvorones, pastas secas y repostería menor.</field>
+            <field name="active">True</field>
+        </record>
+
+        <!-- Seed Category: Bebida -->
+        <record id="categoria_bebida" model="panaderia.categoria">
+            <field name="name">Bebida</field>
+            <field name="codigo">BEB</field>
+            <field name="descripcion">Cafetería caliente, bebidas frías, jugos naturales y lácteos.</field>
+            <field name="active">True</field>
+        </record>
+    </data>
+</odoo>

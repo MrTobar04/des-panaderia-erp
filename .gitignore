@@ -1,1 +1,48 @@
-/.vscode
+# Environment & Secrets (ISO-27001)
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+
+# IDEs & System
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+*.tmp
+
+# Python & Odoo
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+.pytest_cache/
+.coverage
+htmlcov/
+.venv
+env/
+venv/
+ENV/
+
+# Docker persistent data
+/data/
+odoo-db-data/
+odoo-web-data/

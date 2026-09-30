@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Seed Product 1: Pan Francés Tradicional -->
+        <record id="producto_pan_frances" model="panaderia.producto">
+            <field name="name">Pan Francés Tradicional</field>
+            <field name="codigo">PAN-001</field>
+            <field name="categoria_id" ref="categoria_pan"/>
+            <field name="costo">0.05</field>
+            <field name="precio_venta">0.10</field>
+            <field name="descripcion">Pieza de pan francés crujiente horneado en leña diariamente.</field>
+            <field name="active">True</field>
+        </record>
+
+        <!-- Seed Product 2: Pastel Selva Negra -->
+        <record id="producto_selva_negra" model="panaderia.producto">
+            <field name="name">Pastel Selva Negra</field>
+            <field name="codigo">PAS-001</field>
+            <field name="categoria_id" ref="categoria_pastel"/>
+            <field name="costo">8.50</field>
+            <field name="precio_venta">16.00</field>
+            <field name="descripcion">Pastel de chocolate suave con relleno de cerezas y crema chantilly.</field>
+            <field name="active">True</field>
+        </record>
+
+        <!-- Seed Product 3: Galleta de Avena y Miel -->
+        <record id="producto_galleta_avena" model="panaderia.producto">
+            <field name="name">Galleta de Avena y Miel</field>
+            <field name="codigo">GAL-001</field>
+            <field name="categoria_id" ref="categoria_galleta"/>
+            <field name="costo">0.35</field>
+            <field name="precio_venta">0.75</field>
+            <field name="descripcion">Galleta artesanal con avena integral, pasas y endulzada con miel de abeja.</field>
+            <field name="active">True</field>
+        </record>
+
+        <!-- Seed Product 4: Café Americano 12oz -->
+        <record id="producto_cafe_americano" model="panaderia.producto">
+            <field name="name">Café Americano 12oz</field>
+            <field name="codigo">BEB-001</field>
+            <field name="categoria_id" ref="categoria_bebida"/>
+            <field name="costo">0.40</field>
+            <field name="precio_venta">1.50</field>
+            <field name="descripcion">Café pasado en caliente preparado con granos de altura 100% salvadoreños.</field>
+            <field name="active">True</field>
+        </record>
+    </data>
+</odoo>

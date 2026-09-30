@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Tree View: Categorías -->
+    <record id="view_panaderia_categoria_tree" model="ir.ui.view">
+        <field name="name">panaderia.categoria.tree</field>
+        <field name="model">panaderia.categoria</field>
+        <field name="arch" type="xml">
+            <tree string="Categorías de Panadería">
+                <field name="codigo"/>
+                <field name="name"/>
+                <field name="descripcion"/>
+                <field name="active" widget="boolean_toggle"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Form View: Categorías -->
+    <record id="view_panaderia_categoria_form" model="ir.ui.view">
+        <field name="name">panaderia.categoria.form</field>
+        <field name="model">panaderia.categoria</field>
+        <field name="arch" type="xml">
+            <form string="Categoría de Panadería">
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name" class="oe_edit_only" string="Nombre de la Categoría"/>
+                        <h1>
+                            <field name="name" placeholder="e.g. Pan Tradicional"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="codigo" placeholder="e.g. PAN"/>
+                        </group>
+                        <group>
+                            <field name="active" widget="boolean_toggle"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Descripción y Alcance">
+                            <field name="descripcion" placeholder="Notas sobre los productos incluidos en esta categoría..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search View: Categorías -->
+    <record id="view_panaderia_categoria_search" model="ir.ui.view">
+        <field name="name">panaderia.categoria.search</field>
+        <field name="model">panaderia.categoria</field>
+        <field name="arch" type="xml">
+            <search string="Buscar Categorías">
+                <field name="name" string="Nombre o Código" filter_domain="['|', ('name', 'ilike', self), ('codigo', 'ilike', self)]"/>
+                <separator/>
+                <filter string="Activas" name="filter_active" domain="[('active', '=', True)]"/>
+                <filter string="Archivadas" name="filter_archived" domain="[('active', '=', False)]"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action: Categorías -->
+    <record id="action_panaderia_categoria" model="ir.actions.act_window">
+        <field name="name">Categorías de Panadería</field>
+        <field name="res_model">panaderia.categoria</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_panaderia_categoria_search"/>
+        <field name="context">{'search_default_filter_active': 1}</field>
+    </record>
+</odoo>

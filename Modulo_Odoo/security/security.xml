@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        <!-- Module Category -->
+        <record id="module_category_panaderia" model="ir.module.category">
+            <field name="name">Panadería "Delicias Dulces"</field>
+            <field name="description">Control de permisos y roles operativos para la panadería.</field>
+            <field name="sequence">15</field>
+        </record>
+
+        <!-- Security Group: Operador de Panadería -->
+        <record id="group_panaderia_user" model="res.groups">
+            <field name="name">Operador de Panadería</field>
+            <field name="category_id" ref="module_category_panaderia"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+            <field name="comment">Acceso operativo estándar para cajeros y panaderos (lectura, registro y ventas).</field>
+        </record>
+
+        <!-- Security Group: Administrador de Panadería -->
+        <record id="group_panaderia_manager" model="res.groups">
+            <field name="name">Administrador de Panadería</field>
+            <field name="category_id" ref="module_category_panaderia"/>
+            <field name="implied_ids" eval="[(4, ref('group_panaderia_user'))]"/>
+            <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+            <field name="comment">Acceso total administrativo y configuración para el ERP de panadería.</field>
+        </record>
+    </data>
+</odoo>
