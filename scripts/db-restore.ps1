@@ -1,4 +1,4 @@
-﻿<#
+<#
 .SYNOPSIS
     Restauración íntegra de la base de datos de negocio (SPEC-0.2.1).
 
@@ -117,10 +117,10 @@ try {
     # --- Paso 3: validar ANTES de destruir -------------------------------
     # Un artefacto corrupto se rechaza mientras la base actual sigue intacta.
     Write-Host '[1/7] Validando el artefacto...' -ForegroundColor Cyan
-    docker cp $resolvedBackup "${DB_CONTAINER}:/tmp/validate.dump" 2>&1 | Out-Null
+    docker cp $resolvedBackup "${DB_CONTAINER}:/tmp/validate.dump" 2>$null
     $toc     = docker exec $DB_CONTAINER pg_restore -l /tmp/validate.dump 2>$null
     $tocExit = $LASTEXITCODE
-    docker exec $DB_CONTAINER rm -f /tmp/validate.dump 2>&1 | Out-Null
+    docker exec $DB_CONTAINER rm -f /tmp/validate.dump 2>$null
 
     if ($tocExit -ne 0) {
         Write-Host '[ERROR] El artefacto no es un volcado válido. No se modificó nada.' -ForegroundColor Red
@@ -148,13 +148,13 @@ try {
 
     # --- Paso 5: detener Odoo --------------------------------------------
     Write-Host '[2/7] Deteniendo el servidor Odoo...' -ForegroundColor Cyan
-    docker compose stop web 2>&1 | Out-Null
+    docker compose stop web 2>$null
     $webWasStopped = $true
 
     # --- Paso 6: barrido de sesiones residuales --------------------------
     Write-Host '[3/7] Cerrando conexiones residuales...' -ForegroundColor Cyan
     $terminateSql = "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = '$dbName' AND pid <> pg_backend_pid();"
-    docker exec $DB_CONTAINER psql -U $pgUser -d postgres -c $terminateSql 2>&1 | Out-Null
+    docker exec $DB_CONTAINER psql -U $pgUser -d postgres -c $terminateSql 2>$null
 
     # --- Pasos 7-8: recrear la base de datos -----------------------------
     # Único uso legítimo de `-d postgres` en esta función: es la base de
@@ -175,10 +175,10 @@ try {
     # --no-owner --no-privileges hacen el artefacto portable entre máquinas
     # cuyos nombres de rol de PostgreSQL difieren.
     Write-Host '[5/7] Restaurando los datos...' -ForegroundColor Cyan
-    docker cp $resolvedBackup "${DB_CONTAINER}:/tmp/$stagedName" 2>&1 | Out-Null
+    docker cp $resolvedBackup "${DB_CONTAINER}:/tmp/$stagedName" 2>$null
     docker exec $DB_CONTAINER pg_restore -U $pgUser -d $dbName --no-owner --no-privileges "/tmp/$stagedName"
     $restoreExit = $LASTEXITCODE
-    docker exec $DB_CONTAINER rm -f "/tmp/$stagedName" 2>&1 | Out-Null
+    docker exec $DB_CONTAINER rm -f "/tmp/$stagedName" 2>$null
 
     if ($restoreExit -ne 0) {
         Write-Host '[ERROR] pg_restore reportó errores durante la restauración.' -ForegroundColor Red
@@ -211,13 +211,13 @@ finally {
     # jamás deje a Odoo detenido.
     if ($webWasStopped) {
         Write-Host '[7/7] Reiniciando el servidor Odoo...' -ForegroundColor Cyan
-        docker compose start web 2>&1 | Out-Null
+        docker compose start web 2>$null
     }
 
     # Extraer el filestore ahora que `web` está en ejecución.
     if ($script:pendingFilestoreTar) {
         $tarName = Split-Path -Leaf $script:pendingFilestoreTar
-        docker cp $script:pendingFilestoreTar "${WEB_CONTAINER}:/tmp/$tarName" 2>&1 | Out-Null
+        docker cp $script:pendingFilestoreTar "${WEB_CONTAINER}:/tmp/$tarName" 2>$null
         docker exec $WEB_CONTAINER tar -xf "/tmp/$tarName" -C /var/lib/odoo
         if ($LASTEXITCODE -eq 0) {
             Write-Host '      Filestore restaurado.' -ForegroundColor Green
@@ -225,7 +225,7 @@ finally {
         else {
             Write-Host '[WARN] No se pudo extraer el filestore.' -ForegroundColor Yellow
         }
-        docker exec $WEB_CONTAINER rm -f "/tmp/$tarName" 2>&1 | Out-Null
+        docker exec $WEB_CONTAINER rm -f "/tmp/$tarName" 2>$null
     }
 
     Pop-Location -ErrorAction SilentlyContinue

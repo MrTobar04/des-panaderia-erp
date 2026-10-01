@@ -115,8 +115,9 @@ Implementar el sistema de control de existencias en tiempo real y alertas de rea
 * Permisos en `Modulo_Odoo/security/ir.model.access.csv`.
 
 ## 10. Definition of Done (DoD)
-* [ ] Campos de stock y cálculo reactivo `_compute_estado_stock` operativos.
-* [ ] Filtros de Stock Bajo y Agotado funcionando en la vista de búsqueda.
-* [ ] Decoradores visuales de color verificados en la vista Tree.
-* [ ] Formulario de ajustes de inventario probado con entradas y salidas.
-* [ ] Procedimiento de prueba `docs/test-procedures/test-procedure-1.2.1.md` completado y validado.
+* [x] Campos de stock y cálculo reactivo `_compute_estado_stock` operativos.
+* [x] Filtros de Stock Bajo y Agotado funcionando en la vista de búsqueda.
+* [x] Decoradores visuales de color verificados en la vista Tree.
+* [x] Formulario de ajustes de inventario probado con entradas y salidas.
+* [x] Procedimiento de prueba `docs/test-procedures/test-procedure-1.2.1.md` completado y validado.
+

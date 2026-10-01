@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Tree View: Ajustes de Inventario -->
+    <record id="view_panaderia_inventario_ajuste_tree" model="ir.ui.view">
+        <field name="name">panaderia.inventario.ajuste.tree</field>
+        <field name="model">panaderia.inventario.ajuste</field>
+        <field name="arch" type="xml">
+            <tree string="Movimientos y Ajustes de Inventario" create="true">
+                <field name="fecha"/>
+                <field name="producto_id"/>
+                <field name="tipo" widget="badge" decoration-success="tipo == 'entrada'" decoration-warning="tipo == 'salida'" decoration-info="tipo == 'conteo'"/>
+                <field name="cantidad"/>
+                <field name="motivo"/>
+                <field name="user_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Form View: Ajustes de Inventario -->
+    <record id="view_panaderia_inventario_ajuste_form" model="ir.ui.view">
+        <field name="name">panaderia.inventario.ajuste.form</field>
+        <field name="model">panaderia.inventario.ajuste</field>
+        <field name="arch" type="xml">
+            <form string="Ajuste de Inventario">
+                <sheet>
+                    <group>
+                        <group string="Detalles del Movimiento">
+                            <field name="producto_id" options="{'no_create': True}"/>
+                            <field name="tipo"/>
+                            <field name="cantidad"/>
+                        </group>
+                        <group string="Auditoría">
+                            <field name="fecha"/>
+                            <field name="motivo" placeholder="e.g. Producción matutina, Merma por producto dañado..."/>
+                            <field name="user_id" readonly="1"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search View: Ajustes de Inventario -->
+    <record id="view_panaderia_inventario_ajuste_search" model="ir.ui.view">
+        <field name="name">panaderia.inventario.ajuste.search</field>
+        <field name="model">panaderia.inventario.ajuste</field>
+        <field name="arch" type="xml">
+            <search string="Buscar Ajustes de Inventario">
+                <field name="producto_id"/>
+                <field name="motivo"/>
+                <field name="user_id"/>
+                <filter string="Entradas de Producción" name="filter_entrada" domain="[('tipo', '=', 'entrada')]"/>
+                <filter string="Mermas / Desperdicio" name="filter_salida" domain="[('tipo', '=', 'salida')]"/>
+                <filter string="Ajustes de Conteo" name="filter_conteo" domain="[('tipo', '=', 'conteo')]"/>
+                <group expand="0" string="Agrupar Por">
+                    <filter string="Producto" name="group_by_producto" context="{'group_by': 'producto_id'}"/>
+                    <filter string="Tipo de Ajuste" name="group_by_tipo" context="{'group_by': 'tipo'}"/>
+                    <filter string="Fecha" name="group_by_fecha" context="{'group_by': 'fecha:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action: Ajustes de Inventario -->
+    <record id="action_panaderia_inventario_ajuste" model="ir.actions.act_window">
+        <field name="name">Ajustes de Inventario</field>
+        <field name="res_model">panaderia.inventario.ajuste</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_panaderia_inventario_ajuste_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                ¡Registra un ajuste de inventario!
+            </p>
+            <p>
+                Permite registrar entradas de producción, mermas o desperdicios y recuentos físicos.
+            </p>
+        </field>
+    </record>
+
+    <!-- Action Menu: Ajustes de Inventario -->
+    <menuitem id="menu_panaderia_inventario_ajuste"
+              name="Ajustes de Stock"
+              parent="menu_panaderia_inventario"
+              action="action_panaderia_inventario_ajuste"
+              sequence="30"/>
+</odoo>
