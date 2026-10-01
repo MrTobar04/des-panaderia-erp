@@ -1,4 +1,4 @@
-﻿<#
+<#
 .SYNOPSIS
     Lleva la pila desde cualquier estado a un ERP demostrable (SPEC-0.2.1).
 
@@ -123,7 +123,11 @@ try {
         # captura como excepción: de lo contrario el fallo pasaría por éxito.
         $global:LASTEXITCODE = 0
         try {
-            $ErrorActionPreference = 'Stop'
+            $prevErrorAction = $ErrorActionPreference
+            $ErrorActionPreference = 'Continue'
+            if (Test-Path Variable:PSNativeCommandUseErrorActionPreference) {
+                $PSNativeCommandUseErrorActionPreference = $false
+            }
             & (Join-Path $PSScriptRoot 'db-restore.ps1') @restoreParams
             $restoreExit = $LASTEXITCODE
         }
@@ -132,7 +136,7 @@ try {
             exit 3
         }
         finally {
-            $ErrorActionPreference = 'Continue'
+            $ErrorActionPreference = $prevErrorAction
         }
 
         if ($restoreExit -ne 0) {
