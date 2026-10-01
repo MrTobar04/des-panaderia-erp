@@ -12,6 +12,7 @@
 Thumbs.db
 *.swp
 *.tmp
+.agents/
 
 # Python & Odoo
 __pycache__/
