@@ -96,8 +96,8 @@ Implementar la estructura de clasificación y categorización de productos de pa
 * Reglas de acceso en `Modulo_Odoo/security/ir.model.access.csv`.
 
 ## 10. Definition of Done (DoD)
-* [ ] Modelo `panaderia.categoria` implementado y cargado en `__init__.py`.
-* [ ] Archivo `categoria_data.xml` declarado en `__manifest__.py` con las 4 categorías estándar.
-* [ ] Vistas de lista y formulario operativas con el conteo de productos calculado.
-* [ ] Procedimiento de prueba `docs/test-procedures/test-procedure-1.1.2.md` creado y validado.
-* [ ] Pruebas unitarias de integridad y dependencias superadas con éxito.
+* [x] Modelo `panaderia.categoria` implementado y cargado en `__init__.py`.
+* [x] Archivo `categoria_data.xml` declarado en `__manifest__.py` con las 4 categorías estándar.
+* [x] Vistas de lista y formulario operativas con el conteo de productos calculado.
+* [x] Procedimiento de prueba `docs/test-procedures/test-procedure-1.1.2.md` creado y validado.
+* [x] Pruebas unitarias de integridad y dependencias superadas con éxito.
