@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- 1. Dedicated Tree View for Bakery Customers -->
+    <record id="view_panaderia_cliente_tree" model="ir.ui.view">
+        <field name="name">res.partner.panaderia.tree</field>
+        <field name="model">res.partner</field>
+        <field name="priority">20</field>
+        <field name="arch" type="xml">
+            <tree string="Clientes de Panadería">
+                <field name="name" string="Nombre del Cliente" decoration-bf="1"/>
+                <field name="phone" string="Teléfono"/>
+                <field name="email" string="Correo Electrónico"/>
+                <field name="city" string="Ciudad"/>
+                <field name="fecha_registro_panaderia" string="Fecha de Alta"/>
+                <field name="ventas_panaderia_count" string="Órdenes" optional="show"/>
+                <field name="total_compras_panaderia" string="Total Compras ($)" sum="Total General Compras" widget="monetary" decoration-bf="1"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- 2. Form View Extension (res.partner.form) -->
+    <record id="view_panaderia_cliente_form_inherit" model="ir.ui.view">
+        <field name="name">res.partner.panaderia.form.inherit</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="priority">20</field>
+        <field name="arch" type="xml">
+            <!-- Smart Button for Bakery Sales in Button Box -->
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_panaderia_ventas" type="object" class="oe_stat_button"
+                        icon="fa-shopping-basket" attrs="{'invisible': [('es_cliente_panaderia', '=', False)]}">
+                    <div class="o_field_widget o_stat_info">
+                        <span class="o_stat_value">
+                            <field name="total_compras_panaderia" widget="monetary"/>
+                        </span>
+                        <span class="o_stat_text">Compras Panadería</span>
+                    </div>
+                </button>
+            </xpath>
+
+            <!-- Notebook Tab: Datos de Panadería -->
+            <xpath expr="//notebook" position="inside">
+                <page string="Datos de Panadería" name="datos_panaderia">
+                    <group>
+                        <group string="Identificación y Registro Comercial">
+                            <field name="es_cliente_panaderia"/>
+                            <field name="fecha_registro_panaderia" attrs="{'required': [('es_cliente_panaderia', '=', True)]}"/>
+                            <field name="total_compras_panaderia" widget="monetary" readonly="1"/>
+                            <field name="ventas_panaderia_count" readonly="1"/>
+                        </group>
+                        <group string="Notas y Preferencias de Consumo">
+                            <field name="notas_preferencias" placeholder="Ej. Alérgico a nueces, prefiere pan integral caliente por las tardes, cliente frecuente de pasteles de cumpleaños..."/>
+                        </group>
+                    </group>
+                    <group string="Historial de Ventas en Panadería">
+                        <field name="venta_panaderia_ids" readonly="1" nolabel="1">
+                            <tree string="Ventas Realizadas" decoration-info="state == 'draft'" decoration-success="state == 'confirmed'" decoration-muted="state == 'cancelled'">
+                                <field name="name" string="Folio"/>
+                                <field name="fecha" string="Fecha"/>
+                                <field name="total" string="Total ($)" sum="Total Compras" widget="monetary"/>
+                                <field name="state" string="Estado" widget="badge"
+                                       decoration-info="state == 'draft'"
+                                       decoration-success="state == 'confirmed'"
+                                       decoration-danger="state == 'cancelled'"/>
+                            </tree>
+                        </field>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- 3. Dedicated Search View for Bakery Customers -->
+    <record id="view_panaderia_cliente_search" model="ir.ui.view">
+        <field name="name">res.partner.panaderia.search</field>
+        <field name="model">res.partner</field>
+        <field name="arch" type="xml">
+            <search string="Buscar Clientes de Panadería">
+                <field name="name" string="Cliente / Contacto"
+                       filter_domain="['|', '|', ('name', 'ilike', self), ('email', 'ilike', self), ('phone', 'ilike', self)]"/>
+                <field name="phone" string="Teléfono"/>
+                <field name="email" string="Correo"/>
+                <field name="notas_preferencias" string="Preferencias / Notas"/>
+                <separator/>
+                <filter string="Clientes de Panadería" name="filter_es_cliente_panaderia"
+                        domain="[('es_cliente_panaderia', '=', True)]"/>
+                <filter string="Con Compras Realizadas" name="filter_con_compras"
+                        domain="[('es_cliente_panaderia', '=', True), ('total_compras_panaderia', '>', 0)]"/>
+                <filter string="Sin Compras Aún" name="filter_sin_compras"
+                        domain="[('es_cliente_panaderia', '=', True), ('total_compras_panaderia', '=', 0)]"/>
+                <separator/>
+                <group expand="0" string="Agrupar Por">
+                    <filter string="Fecha de Alta en Panadería" name="group_by_fecha_registro"
+                            context="{'group_by': 'fecha_registro_panaderia:month'}"/>
+                    <filter string="Ciudad" name="group_by_city" context="{'group_by': 'city'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- 4. Window Action: Clientes de Panadería -->
+    <record id="action_panaderia_cliente" model="ir.actions.act_window">
+        <field name="name">Clientes de Panadería</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">tree,form,kanban</field>
+        <field name="search_view_id" ref="view_panaderia_cliente_search"/>
+        <field name="domain">[('es_cliente_panaderia', '=', True)]</field>
+        <field name="context">{
+            'default_es_cliente_panaderia': True,
+            'search_default_filter_es_cliente_panaderia': 1
+        }</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                ¡Registra tu primer cliente de panadería!
+            </p>
+            <p>
+                Lleva un control detallado de tus clientes, sus fechas de registro, notas sobre alergias o gustos y acumula automáticamente su historial de compras.
+            </p>
+        </field>
+    </record>
+
+    <!-- View Action Specific Tree View Association -->
+    <record id="action_panaderia_cliente_view_tree" model="ir.actions.act_window.view">
+        <field name="sequence" eval="1"/>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="view_panaderia_cliente_tree"/>
+        <field name="act_window_id" ref="action_panaderia_cliente"/>
+    </record>
+
+    <!-- 5. Menu Hierarchy -->
+    <!-- Direct Menu Item under Panadería root -->
+    <menuitem id="menu_panaderia_cliente"
+              name="Clientes"
+              parent="menu_panaderia_root"
+              action="action_panaderia_cliente"
+              sequence="25"/>
+
+    <!-- Sub-menu Item under Ventas section -->
+    <menuitem id="menu_panaderia_ventas_clientes"
+              name="Clientes"
+              parent="menu_panaderia_ventas_root"
+              action="action_panaderia_cliente"
+              sequence="20"/>
+</odoo>
