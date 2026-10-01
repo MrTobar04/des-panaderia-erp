@@ -5,4 +5,4 @@ from . import inventario_ajuste
 from . import factura
 from . import venta
 from . import cliente
-
+from . import reporte_panaderia
