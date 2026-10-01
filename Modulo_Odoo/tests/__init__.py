@@ -5,3 +5,4 @@ from . import test_venta
 from . import test_factura
 from . import test_stock_tracking
 from . import test_cliente
+from . import test_reporte
