@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Cliente Seed 1: Mostrador / Venta Rápida -->
+        <record id="res_partner_cliente_mostrador" model="res.partner">
+            <field name="name">Cliente General / Mostrador</field>
+            <field name="es_cliente_panaderia" eval="True"/>
+            <field name="fecha_registro_panaderia">2026-01-01</field>
+            <field name="notas_preferencias">Cliente predeterminado para ventas anónimas de mostrador y pedidos rápidos sin registro nominal.</field>
+            <field name="email">mostrador@deliciasdulces.local</field>
+            <field name="phone">2200-0000</field>
+            <field name="street">Avenida Central #100, Local Panadería</field>
+            <field name="city">San Salvador</field>
+        </record>
+
+        <!-- Cliente Seed 2: Cliente Regular Frecuente -->
+        <record id="res_partner_carlos_mendoza" model="res.partner">
+            <field name="name">Carlos Mendoza</field>
+            <field name="es_cliente_panaderia" eval="True"/>
+            <field name="fecha_registro_panaderia">2026-01-15</field>
+            <field name="notas_preferencias">Prefiere pan integral, pan de caja artesanal y repostería baja en azúcar.</field>
+            <field name="email">carlos.mendoza@email.test</field>
+            <field name="phone">7123-4567</field>
+            <field name="street">Colonia Escalón, Calle Principal #24</field>
+            <field name="city">San Salvador</field>
+        </record>
+
+        <!-- Cliente Seed 3: Cliente con Alergias y Preferencias Especiales -->
+        <record id="res_partner_ana_lopez" model="res.partner">
+            <field name="name">Ana López</field>
+            <field name="es_cliente_panaderia" eval="True"/>
+            <field name="fecha_registro_panaderia">2026-02-01</field>
+            <field name="notas_preferencias">Alérgica a las nueces y cacahuates. Pedidos frecuentes de pasteles de tres leches para eventos familiares.</field>
+            <field name="email">ana.lopez@email.test</field>
+            <field name="phone">7890-1234</field>
+            <field name="street">Residencial Los Robles, Polígono C #12</field>
+            <field name="city">Santa Tecla</field>
+        </record>
+    </data>
+</odoo>
