@@ -1,5 +1,5 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_panaderia_categoria_user,panaderia.categoria.user,model_panaderia_categoria,group_panaderia_user,1,1,1,0
+access_panaderia_categoria_user,panaderia.categoria.user,model_panaderia_categoria,group_panaderia_user,1,0,0,0
 access_panaderia_categoria_manager,panaderia.categoria.manager,model_panaderia_categoria,group_panaderia_manager,1,1,1,1
 access_panaderia_producto_user,panaderia.producto.user,model_panaderia_producto,group_panaderia_user,1,1,1,0
 access_panaderia_producto_manager,panaderia.producto.manager,model_panaderia_producto,group_panaderia_manager,1,1,1,1
@@ -11,4 +11,3 @@ access_panaderia_factura_user,panaderia.factura.user,model_panaderia_factura,gro
 access_panaderia_factura_manager,panaderia.factura.manager,model_panaderia_factura,group_panaderia_manager,1,1,1,1
 access_panaderia_inventario_ajuste_user,panaderia.inventario.ajuste.user,model_panaderia_inventario_ajuste,group_panaderia_user,1,1,1,0
 access_panaderia_inventario_ajuste_manager,panaderia.inventario.ajuste.manager,model_panaderia_inventario_ajuste,group_panaderia_manager,1,1,1,1
-
