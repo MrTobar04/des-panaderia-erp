@@ -29,6 +29,7 @@ Módulo modular para la gestión integral de operaciones de panadería:
         'data/factura_sequence.xml',
         'views/categoria_views.xml',
         'views/producto_views.xml',
+        'views/inventario_views.xml',
         'views/venta_views.xml',
         'views/factura_views.xml',
     ],

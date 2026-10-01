@@ -5,7 +5,7 @@
         <field name="name">panaderia.producto.tree</field>
         <field name="model">panaderia.producto</field>
         <field name="arch" type="xml">
-            <tree string="Catálogo de Productos de Panadería" decoration-muted="not active">
+            <tree string="Catálogo de Productos de Panadería" decoration-muted="not active" decoration-danger="estado_stock == 'agotado'" decoration-warning="estado_stock == 'bajo'">
                 <field name="codigo" string="SKU / Código" optional="show"/>
                 <field name="name" string="Nombre del Producto" decoration-bf="1"/>
                 <field name="categoria_id" string="Categoría" widget="badge"/>
@@ -13,6 +13,9 @@
                 <field name="precio_venta" string="Precio Venta ($)" widget="monetary" decoration-bf="1"/>
                 <field name="margen_bruto" string="Margen ($)" widget="monetary" optional="show"/>
                 <field name="porcentaje_margen" string="% Margen" widget="percentage" optional="show"/>
+                <field name="cantidad_disponible" string="Stock Disponible" decoration-bf="1"/>
+                <field name="stock_minimo" string="Stock Mínimo" optional="show"/>
+                <field name="estado_stock" string="Estado Stock" widget="badge" decoration-success="estado_stock == 'normal'" decoration-warning="estado_stock == 'bajo'" decoration-danger="estado_stock == 'agotado'"/>
                 <field name="active" widget="boolean_toggle"/>
             </tree>
         </field>
@@ -24,6 +27,9 @@
         <field name="model">panaderia.producto</field>
         <field name="arch" type="xml">
             <form string="Producto de Panadería">
+                <header>
+                    <button name="action_ajustar_stock" string="Ajustar Stock" type="object" class="oe_highlight" icon="fa-sliders"/>
+                </header>
                 <sheet>
                     <widget name="web_ribbon" title="Archivado" bg_color="bg-danger" attrs="{'invisible': [('active', '=', True)]}"/>
                     <div class="oe_title">
@@ -43,6 +49,16 @@
                             <field name="precio_venta" widget="monetary" placeholder="0.00"/>
                             <field name="margen_bruto" readonly="1" widget="monetary"/>
                             <field name="porcentaje_margen" readonly="1"/>
+                        </group>
+                    </group>
+                    <group string="Control de Inventario y Alertas">
+                        <group>
+                            <field name="cantidad_disponible"/>
+                            <field name="stock_minimo"/>
+                        </group>
+                        <group>
+                            <field name="estado_stock" widget="badge" decoration-success="estado_stock == 'normal'" decoration-warning="estado_stock == 'bajo'" decoration-danger="estado_stock == 'agotado'"/>
+                            <field name="alerta_stock_bajo" invisible="1"/>
                         </group>
                     </group>
                     <notebook>
@@ -67,8 +83,12 @@
                 <separator/>
                 <filter string="Activos" name="filter_active" domain="[('active', '=', True)]"/>
                 <filter string="Archivados" name="filter_archived" domain="[('active', '=', False)]"/>
+                <separator/>
+                <filter string="Stock Bajo" name="filter_stock_bajo" domain="[('alerta_stock_bajo', '=', True), ('estado_stock', '=', 'bajo')]"/>
+                <filter string="Agotados" name="filter_agotados" domain="[('estado_stock', '=', 'agotado')]"/>
                 <group expand="0" string="Agrupar Por">
                     <filter string="Categoría" name="group_by_categoria" context="{'group_by': 'categoria_id'}"/>
+                    <filter string="Estado de Stock" name="group_by_estado_stock" context="{'group_by': 'estado_stock'}"/>
                 </group>
             </search>
         </field>
