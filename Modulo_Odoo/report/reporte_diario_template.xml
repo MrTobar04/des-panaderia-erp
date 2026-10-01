@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Declaración de Acción de Reporte PDF (QWeb) -->
+    <record id="action_report_resumen_diario" model="ir.actions.report">
+        <field name="name">Resumen Operativo Diario</field>
+        <field name="model">panaderia.reporte.diario.wizard</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">panaderia.reporte_diario_template</field>
+        <field name="report_file">panaderia.reporte_diario_template</field>
+        <field name="binding_model_id" ref="model_panaderia_reporte_diario_wizard"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <!-- Plantilla Principal QWeb para Reporte Diario -->
+    <template id="reporte_diario_template">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <div class="page" style="font-family: Helvetica, Arial, sans-serif; font-size: 13px; color: #333;">
+                    
+                    <!-- Encabezado del Reporte -->
+                    <div class="row mb-4 pb-2 border-bottom">
+                        <div class="col-8">
+                            <h2 style="color: #6d4c41; margin-bottom: 2px;">
+                                🥐 Panadería "Delicias Dulces"
+                            </h2>
+                            <h4 class="text-muted" style="font-weight: 400; margin-top: 0;">
+                                Resumen Operativo Diario de Ventas e Inventario
+                            </h4>
+                        </div>
+                        <div class="col-4 text-end" style="font-size: 12px;">
+                            <strong>Fecha de Operación:</strong>
+                            <span t-esc="fecha_reporte" t-options="{'widget': 'date'}"/><br/>
+                            <strong>Emisión:</strong>
+                            <span t-esc="datetime.datetime.now().strftime('%d/%m/%Y %H:%M')"/>
+                        </div>
+                    </div>
+
+                    <!-- Sección 1: Tarjetas KPI de Resumen del Día -->
+                    <div class="row mb-4 text-center">
+                        <div class="col-4">
+                            <div class="p-3 border rounded shadow-sm" style="background-color: #fdfbf7; border-left: 5px solid #28a745 !important;">
+                                <div style="font-size: 11px; text-transform: uppercase; color: #666; font-weight: bold;">
+                                    Total Ingresos del Día
+                                </div>
+                                <div style="font-size: 22px; font-weight: bold; color: #28a745; margin-top: 4px;">
+                                    $<t t-esc="'%.2f' % total_ingresos_dia"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="p-3 border rounded shadow-sm" style="background-color: #fdfbf7; border-left: 5px solid #007bff !important;">
+                                <div style="font-size: 11px; text-transform: uppercase; color: #666; font-weight: bold;">
+                                    Órdenes Confirmadas
+                                </div>
+                                <div style="font-size: 22px; font-weight: bold; color: #007bff; margin-top: 4px;">
+                                    <t t-esc="total_ordenes_dia"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="p-3 border rounded shadow-sm" style="background-color: #fdfbf7; border-left: 5px solid #ffc107 !important;">
+                                <div style="font-size: 11px; text-transform: uppercase; color: #666; font-weight: bold;">
+                                    Piezas / Unidades Vendidas
+                                </div>
+                                <div style="font-size: 22px; font-weight: bold; color: #d39e00; margin-top: 4px;">
+                                    <t t-esc="'%.0f' % total_unidades_dia"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sección 2: Ranking de Productos Más Vendidos -->
+                    <div class="mb-4">
+                        <h5 style="color: #6d4c41; border-bottom: 2px solid #6d4c41; padding-bottom: 4px;">
+                            📊 Ranking de Productos Más Vendidos (Top 10)
+                        </h5>
+                        <table class="table table-sm table-striped mt-2" style="font-size: 12px;">
+                            <thead style="background-color: #f5efe6;">
+                                <tr>
+                                    <th style="width: 5%;">#</th>
+                                    <th style="width: 45%;">Producto</th>
+                                    <th style="width: 20%;">Categoría</th>
+                                    <th class="text-end" style="width: 15%;">Unidades</th>
+                                    <th class="text-end" style="width: 15%;">Total ($)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-if="top_productos">
+                                    <t t-set="rank" t-value="1"/>
+                                    <t t-foreach="top_productos" t-as="item">
+                                        <tr>
+                                            <td><t t-esc="rank"/></td>
+                                            <td><strong><span t-esc="item.producto_id.name"/></strong></td>
+                                            <td><span t-esc="item.categoria_id.name"/></td>
+                                            <td class="text-end"><t t-esc="'%.2f' % item.cantidad_vendida"/></td>
+                                            <td class="text-end" style="font-weight: bold; color: #28a745;">
+                                                $<t t-esc="'%.2f' % item.total_ingresos"/>
+                                            </td>
+                                        </tr>
+                                        <t t-set="rank" t-value="rank + 1"/>
+                                    </t>
+                                </t>
+                                <t t-else="">
+                                    <tr>
+                                        <td colspan="5" class="text-center text-muted py-3">
+                                            No se registraron ventas confirmadas en esta fecha.
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Sección 3: Alertas de Stock Bajo y Reabastecimiento -->
+                    <div class="mb-4">
+                        <h5 style="color: #dc3545; border-bottom: 2px solid #dc3545; padding-bottom: 4px;">
+                            ⚠️ Alertas de Stock Bajo / Necesidad de Reabastecimiento
+                        </h5>
+                        <table class="table table-sm table-bordered mt-2" style="font-size: 12px;">
+                            <thead style="background-color: #fff3f3;">
+                                <tr>
+                                    <th style="width: 15%;">SKU</th>
+                                    <th style="width: 40%;">Producto</th>
+                                    <th class="text-center" style="width: 15%;">Stock Actual</th>
+                                    <th class="text-center" style="width: 15%;">Stock Mínimo</th>
+                                    <th class="text-center" style="width: 15%;">Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-if="productos_stock_bajo">
+                                    <t t-foreach="productos_stock_bajo" t-as="prod">
+                                        <tr>
+                                            <td><span t-esc="prod.codigo or '-'"/></td>
+                                            <td><strong><span t-esc="prod.name"/></strong></td>
+                                            <td class="text-center" style="font-weight: bold; color: #dc3545;">
+                                                <span t-esc="'%.2f' % prod.cantidad_disponible"/>
+                                            </td>
+                                            <td class="text-center">
+                                                <span t-esc="'%.2f' % prod.stock_minimo"/>
+                                            </td>
+                                            <td class="text-center">
+                                                <span t-if="prod.estado_stock == 'agotado'" class="badge bg-danger text-white">Agotado</span>
+                                                <span t-elif="prod.estado_stock == 'bajo'" class="badge bg-warning text-dark">Bajo Stock</span>
+                                                <span t-else="" class="badge bg-secondary">Revisar</span>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </t>
+                                <t t-else="">
+                                    <tr>
+                                        <td colspan="5" class="text-center text-success py-3">
+                                            ✓ Todos los productos se encuentran en niveles normales de existencias.
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pie de Página Informativo -->
+                    <div class="mt-4 pt-3 border-top text-center text-muted" style="font-size: 10px;">
+                        Reporte emitido por el Sistema ERP Panadería "Delicias Dulces" • Documento interno para control operativo.
+                    </div>
+
+                </div>
+            </t>
+        </t>
+    </template>
+</odoo>

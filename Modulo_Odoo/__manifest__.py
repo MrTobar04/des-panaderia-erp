@@ -3,7 +3,7 @@
     'name': 'Panadería Delicias Dulces - Gestión ERP',
     'version': '1.0.0',
     'category': 'Sales/Inventory',
-    'summary': 'Sistema ERP a medida para la gestión de panadería: catálogo, inventario, ventas y facturación.',
+    'summary': 'Sistema ERP a medida para la gestión de panadería: catálogo, inventario, ventas, facturación y reportes.',
     'description': """
 Panadería "Delicias Dulces" ERP
 ================================
@@ -12,7 +12,7 @@ Módulo modular para la gestión integral de operaciones de panadería:
 - Clasificación por categorías de productos de panadería (Pan, Pastel, Galleta, Bebida).
 - Control de inventario y alertas de stock mínimo.
 - Proceso ágil de órdenes de venta y facturación simple.
-- Reportes operativos de rentabilidad y ventas.
+- Reportes operativos de rentabilidad, ventas del día, top de productos y alertas de reposición.
     """,
     'author': 'Equipo de Desarrollo Delicias Dulces',
     'website': 'https://panaderia-deliciasdulces.local',
@@ -34,6 +34,8 @@ Módulo modular para la gestión integral de operaciones de panadería:
         'views/cliente_views.xml',
         'views/venta_views.xml',
         'views/factura_views.xml',
+        'views/reporte_views.xml',
+        'report/reporte_diario_template.xml',
     ],
     'demo': [],
     'installable': True,

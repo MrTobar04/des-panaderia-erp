@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vista Pivote: Análisis de Ventas -->
+    <record id="view_panaderia_reporte_ventas_pivot" model="ir.ui.view">
+        <field name="name">panaderia.reporte.ventas.pivot</field>
+        <field name="model">panaderia.reporte.ventas</field>
+        <field name="arch" type="xml">
+            <pivot string="Análisis de Ventas de Panadería" sample="1">
+                <field name="categoria_id" type="row"/>
+                <field name="producto_id" type="row"/>
+                <field name="fecha" interval="day" type="col"/>
+                <field name="cantidad_vendida" type="measure"/>
+                <field name="total_ingresos" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Vista Gráfica: Ranking de Productos y Tendencias -->
+    <record id="view_panaderia_reporte_ventas_graph" model="ir.ui.view">
+        <field name="name">panaderia.reporte.ventas.graph</field>
+        <field name="model">panaderia.reporte.ventas</field>
+        <field name="arch" type="xml">
+            <graph string="Ranking de Productos Más Vendidos" type="bar" sample="1">
+                <field name="producto_id"/>
+                <field name="cantidad_vendida" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Vista Árbol (Lista): Resumen Analítico de Ventas -->
+    <record id="view_panaderia_reporte_ventas_tree" model="ir.ui.view">
+        <field name="name">panaderia.reporte.ventas.tree</field>
+        <field name="model">panaderia.reporte.ventas</field>
+        <field name="arch" type="xml">
+            <tree string="Resumen de Ventas" create="false" edit="false" delete="false">
+                <field name="fecha"/>
+                <field name="producto_id" decoration-bf="1"/>
+                <field name="categoria_id" widget="badge"/>
+                <field name="cantidad_vendida" sum="Total Unidades"/>
+                <field name="total_ingresos" sum="Total Ingresos ($)" widget="monetary" decoration-bf="1"/>
+                <field name="precio_promedio" widget="monetary" optional="show"/>
+                <field name="ordenes_count" sum="Total Órdenes" optional="show"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Vista Búsqueda (Filtros y Agrupadores) de Reporte de Ventas -->
+    <record id="view_panaderia_reporte_ventas_search" model="ir.ui.view">
+        <field name="name">panaderia.reporte.ventas.search</field>
+        <field name="model">panaderia.reporte.ventas</field>
+        <field name="arch" type="xml">
+            <search string="Buscar en Análisis de Ventas">
+                <field name="producto_id" string="Producto"/>
+                <field name="categoria_id" string="Categoría"/>
+                <separator/>
+                <filter string="Ventas de Hoy" name="filter_today"
+                        domain="[('fecha', '=', context_today().strftime('%Y-%m-%d'))]"/>
+                <filter string="Este Mes" name="filter_this_month"
+                        domain="[('fecha', '&gt;=', context_today().strftime('%Y-%m-01'))]"/>
+                <group expand="1" string="Agrupar Por">
+                    <filter string="Producto" name="group_by_producto" context="{'group_by': 'producto_id'}"/>
+                    <filter string="Categoría" name="group_by_categoria" context="{'group_by': 'categoria_id'}"/>
+                    <filter string="Fecha (Día)" name="group_by_fecha_day" context="{'group_by': 'fecha:day'}"/>
+                    <filter string="Fecha (Mes)" name="group_by_fecha_month" context="{'group_by': 'fecha:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Vista Árbol Especial: Alerta de Stock Bajo y Reabastecimiento -->
+    <record id="view_panaderia_producto_stock_bajo_tree" model="ir.ui.view">
+        <field name="name">panaderia.producto.stock.bajo.tree</field>
+        <field name="model">panaderia.producto</field>
+        <field name="priority">20</field>
+        <field name="arch" type="xml">
+            <tree string="Alertas de Stock Bajo / Reabastecimiento" create="false"
+                  decoration-danger="estado_stock == 'agotado'" decoration-warning="estado_stock == 'bajo'">
+                <field name="codigo" string="SKU / Código"/>
+                <field name="name" string="Producto" decoration-bf="1"/>
+                <field name="categoria_id" string="Categoría" widget="badge"/>
+                <field name="cantidad_disponible" string="Stock Actual" decoration-bf="1"/>
+                <field name="stock_minimo" string="Stock Mínimo"/>
+                <field name="estado_stock" string="Estado de Alerta" widget="badge"
+                       decoration-warning="estado_stock == 'bajo'"
+                       decoration-danger="estado_stock == 'agotado'"/>
+                <button name="action_ajustar_stock" string="Reabastecer / Ajustar" type="object"
+                        class="btn-primary" icon="fa-plus-circle"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Formulario del Wizard de Impresión del Resumen Diario -->
+    <record id="view_panaderia_reporte_diario_wizard_form" model="ir.ui.view">
+        <field name="name">panaderia.reporte.diario.wizard.form</field>
+        <field name="model">panaderia.reporte.diario.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Imprimir Resumen Operativo Diario">
+                <group>
+                    <field name="fecha"/>
+                </group>
+                <footer>
+                    <button name="action_print_pdf" string="Generar PDF" type="object" class="btn-primary"/>
+                    <button string="Cancelar" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Acciones de Ventana -->
+    <!-- 1. Acción: Reporte de Ventas del Día -->
+    <record id="action_panaderia_reporte_ventas_dia" model="ir.actions.act_window">
+        <field name="name">Ventas del Día</field>
+        <field name="res_model">panaderia.reporte.ventas</field>
+        <field name="view_mode">pivot,graph,tree</field>
+        <field name="search_view_id" ref="view_panaderia_reporte_ventas_search"/>
+        <field name="context">{'search_default_filter_today': 1, 'search_default_group_by_categoria': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                ¡Sin datos de ventas confirmadas para el día de hoy!
+            </p>
+            <p>
+                Confirma órdenes de venta en mostrador para visualizar los totales analíticos e ingresos consolidados en tiempo real.
+            </p>
+        </field>
+    </record>
+
+    <!-- 2. Acción: Reporte de Productos Más Vendidos -->
+    <record id="action_panaderia_reporte_top_productos" model="ir.actions.act_window">
+        <field name="name">Productos Más Vendidos</field>
+        <field name="res_model">panaderia.reporte.ventas</field>
+        <field name="view_mode">graph,pivot,tree</field>
+        <field name="search_view_id" ref="view_panaderia_reporte_ventas_search"/>
+        <field name="context">{'search_default_group_by_producto': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                ¡Ranking de Productos!
+            </p>
+            <p>
+                Visualiza los productos con mayor demanda y volumen de ingresos mediante gráficos interactivos de barras y tablas pivote.
+            </p>
+        </field>
+    </record>
+
+    <!-- 3. Acción: Reporte de Stock Bajo / Alerta de Reabastecimiento -->
+    <record id="action_panaderia_reporte_stock_bajo" model="ir.actions.act_window">
+        <field name="name">Alertas de Stock Bajo</field>
+        <field name="res_model">panaderia.producto</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_panaderia_producto_stock_bajo_tree"/>
+        <field name="domain">[('alerta_stock_bajo', '=', True), ('active', '=', True)]</field>
+        <field name="search_view_id" ref="view_panaderia_producto_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                ¡Excelente! No hay productos con nivel crítico o bajo stock.
+            </p>
+            <p>
+                Todos los productos de la panadería cuentan con existencias superiores al stock mínimo configurado.
+            </p>
+        </field>
+    </record>
+
+    <!-- 4. Acción: Wizard de Impresión PDF Diario -->
+    <record id="action_panaderia_reporte_diario_wizard" model="ir.actions.act_window">
+        <field name="name">Imprimir Resumen Diario (PDF)</field>
+        <field name="res_model">panaderia.reporte.diario.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <!-- Jerarquía de Menús para Reportes -->
+    <!-- Menú Padre: Reportes -->
+    <menuitem id="menu_panaderia_reportes_root"
+              name="Reportes"
+              parent="menu_panaderia_root"
+              sequence="40"/>
+
+    <!-- Submenú 1: Ventas del Día -->
+    <menuitem id="menu_panaderia_reporte_ventas_dia"
+              name="Ventas del Día"
+              parent="menu_panaderia_reportes_root"
+              action="action_panaderia_reporte_ventas_dia"
+              sequence="10"/>
+
+    <!-- Submenú 2: Productos Más Vendidos -->
+    <menuitem id="menu_panaderia_reporte_top_productos"
+              name="Productos Más Vendidos"
+              parent="menu_panaderia_reportes_root"
+              action="action_panaderia_reporte_top_productos"
+              sequence="20"/>
+
+    <!-- Submenú 3: Stock Bajo / Alertas -->
+    <menuitem id="menu_panaderia_reporte_stock_bajo"
+              name="Stock Bajo / Alertas"
+              parent="menu_panaderia_reportes_root"
+              action="action_panaderia_reporte_stock_bajo"
+              sequence="30"/>
+
+    <!-- Submenú 4: Imprimir Resumen Diario PDF -->
+    <menuitem id="menu_panaderia_reporte_diario_pdf"
+              name="Imprimir Resumen Diario (PDF)"
+              parent="menu_panaderia_reportes_root"
+              action="action_panaderia_reporte_diario_wizard"
+              sequence="40"/>
+</odoo>
