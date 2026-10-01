@@ -5,10 +5,12 @@
         <field name="name">panaderia.categoria.tree</field>
         <field name="model">panaderia.categoria</field>
         <field name="arch" type="xml">
-            <tree string="Categorías de Panadería">
-                <field name="codigo"/>
-                <field name="name"/>
-                <field name="descripcion"/>
+            <tree string="Categorías de Panadería" decoration-muted="not active">
+                <field name="sequence" widget="handle"/>
+                <field name="codigo" string="Código" decoration-bf="1"/>
+                <field name="name" string="Nombre de la Categoría" decoration-bf="1"/>
+                <field name="total_productos" string="Total Productos" widget="badge" decoration-info="total_productos &gt; 0"/>
+                <field name="descripcion" string="Descripción" optional="show"/>
                 <field name="active" widget="boolean_toggle"/>
             </tree>
         </field>
@@ -21,6 +23,12 @@
         <field name="arch" type="xml">
             <form string="Categoría de Panadería">
                 <sheet>
+                    <widget name="web_ribbon" title="Archivado" bg_color="bg-danger" attrs="{'invisible': [('active', '=', True)]}"/>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_productos" type="object" class="oe_stat_button" icon="fa-cubes">
+                            <field name="total_productos" string="Productos" widget="statinfo"/>
+                        </button>
+                    </div>
                     <div class="oe_title">
                         <label for="name" class="oe_edit_only" string="Nombre de la Categoría"/>
                         <h1>
@@ -28,15 +36,27 @@
                         </h1>
                     </div>
                     <group>
-                        <group>
+                        <group string="Identificación">
                             <field name="codigo" placeholder="e.g. PAN"/>
+                            <field name="sequence"/>
                         </group>
-                        <group>
+                        <group string="Estado">
                             <field name="active" widget="boolean_toggle"/>
                         </group>
                     </group>
                     <notebook>
-                        <page string="Descripción y Alcance">
+                        <page string="Productos Asociados" name="productos_asociados">
+                            <field name="producto_ids" readonly="1">
+                                <tree string="Productos">
+                                    <field name="codigo" string="SKU"/>
+                                    <field name="name" string="Nombre"/>
+                                    <field name="precio_venta" string="Precio Venta ($)" widget="monetary"/>
+                                    <field name="cantidad_disponible" string="Stock Disponible"/>
+                                    <field name="estado_stock" string="Estado Stock" widget="badge" decoration-success="estado_stock == 'normal'" decoration-warning="estado_stock == 'bajo'" decoration-danger="estado_stock == 'agotado'"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Descripción y Alcance" name="descripcion_alcance">
                             <field name="descripcion" placeholder="Notas sobre los productos incluidos en esta categoría..."/>
                         </page>
                     </notebook>
@@ -52,9 +72,15 @@
         <field name="arch" type="xml">
             <search string="Buscar Categorías">
                 <field name="name" string="Nombre o Código" filter_domain="['|', ('name', 'ilike', self), ('codigo', 'ilike', self)]"/>
+                <field name="codigo" string="Código"/>
                 <separator/>
                 <filter string="Activas" name="filter_active" domain="[('active', '=', True)]"/>
                 <filter string="Archivadas" name="filter_archived" domain="[('active', '=', False)]"/>
+                <filter string="Con Productos" name="filter_con_productos" domain="[('total_productos', '&gt;', 0)]"/>
+                <filter string="Sin Productos" name="filter_sin_productos" domain="[('total_productos', '=', 0)]"/>
+                <group expand="0" string="Agrupar Por">
+                    <filter string="Estado Activo" name="group_by_active" context="{'group_by': 'active'}"/>
+                </group>
             </search>
         </field>
     </record>
@@ -66,5 +92,13 @@
         <field name="view_mode">tree,form</field>
         <field name="search_view_id" ref="view_panaderia_categoria_search"/>
         <field name="context">{'search_default_filter_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                ¡Crea tu primera categoría de panadería!
+            </p>
+            <p>
+                Organiza tus productos en categorías como Pan, Pastel, Galleta y Bebida para clasificar tu catálogo e inventario.
+            </p>
+        </field>
     </record>
 </odoo>
