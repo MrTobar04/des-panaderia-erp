@@ -88,7 +88,7 @@ Extender el modelo estándar de contactos y clientes de Odoo (`res.partner`) par
 * Datos semilla (Cliente Mostrador): `Modulo_Odoo/data/cliente_data.xml`.
 
 ## 10. Definition of Done (DoD)
-* [ ] Modelo `res.partner` extendido con los campos de panadería.
-* [ ] Vistas Formulario y Lista personalizadas con filtros de clientes de panadería.
-* [ ] Conexión y cálculo automático de `total_compras_panaderia` probado con ventas confirmadas.
-* [ ] Procedimiento de prueba `docs/test-procedures/test-procedure-3.1.1.md` completado y verificado.
+* [x] Modelo `res.partner` extendido con los campos de panadería.
+* [x] Vistas Formulario y Lista personalizadas con filtros de clientes de panadería.
+* [x] Conexión y cálculo automático de `total_compras_panaderia` probado con ventas confirmadas.
+* [x] Procedimiento de prueba `docs/test-procedures/test-procedure-3.1.1.md` completado y verificado.

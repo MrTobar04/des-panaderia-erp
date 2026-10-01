@@ -65,7 +65,12 @@ class PanaderiaInventarioAjuste(models.Model):
         for rec in records:
             # Control de permisos para tipos de ajuste 'salida' y 'conteo'
             if rec.tipo in ('salida', 'conteo'):
-                if not (self.env.user.has_group('Modulo_Odoo.group_panaderia_manager') or self.env.is_admin()):
+                is_manager = (
+                    self.env.user.has_group('panaderia.group_panaderia_manager')
+                    or self.env.user.has_group('Modulo_Odoo.group_panaderia_manager')
+                    or self.env.is_admin()
+                )
+                if not is_manager:
                     raise UserError("Solo los administradores o supervisores de panadería están autorizados para registrar mermas o ajustes directos de conteo.")
 
             # Actualización del stock del producto

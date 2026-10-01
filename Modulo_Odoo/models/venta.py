@@ -95,11 +95,7 @@ class PanaderiaVenta(models.Model):
                         )
                     prod.cantidad_disponible -= line.cantidad
 
-            # 3. Actualizar compras del cliente si el modelo cuenta con el campo
-            if hasattr(order.cliente_id, 'total_compras_panaderia'):
-                order.cliente_id.total_compras_panaderia += order.total
-
-            # 4. Crear factura asociada si el modelo existe
+            # 3. Crear factura asociada si el modelo existe
             if 'panaderia.factura' in self.env:
                 factura = self.env['panaderia.factura'].create({
                     'name': 'Borrador',
@@ -110,7 +106,7 @@ class PanaderiaVenta(models.Model):
                 })
                 order.factura_id = factura.id
 
-            # 5. Cambiar estado a confirmada
+            # 4. Cambiar estado a confirmada (desencadena recompute en res.partner)
             order.state = 'confirmed'
 
     def action_cancel(self):
@@ -125,11 +121,7 @@ class PanaderiaVenta(models.Model):
                 # Cancelar factura asociada si existe
                 if order.factura_id:
                     order.factura_id.state = 'cancelled'
-                # Restar del total del cliente si aplica
-                if hasattr(order.cliente_id, 'total_compras_panaderia'):
-                    order.cliente_id.total_compras_panaderia = max(
-                        0.0, order.cliente_id.total_compras_panaderia - order.total
-                    )
+            # Cambiar estado a cancelada (desencadena recompute en res.partner)
             order.state = 'cancelled'
 
     def action_draft(self):

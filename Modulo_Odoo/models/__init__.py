@@ -4,4 +4,5 @@ from . import producto
 from . import inventario_ajuste
 from . import factura
 from . import venta
+from . import cliente
 

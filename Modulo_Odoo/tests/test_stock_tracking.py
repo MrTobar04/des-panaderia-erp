@@ -26,18 +26,20 @@ class TestStockTracking(TransactionCase):
         })
 
         # Usuarios con diferentes roles
+        group_user = cls.env.ref('panaderia.group_panaderia_user', raise_if_not_found=False) or cls.env.ref('Modulo_Odoo.group_panaderia_user')
         cls.user_operador = cls.env['res.users'].create({
             'name': 'Operador Juan',
             'login': 'operador_juan',
             'email': 'juan@deliciasdulces.local',
-            'groups_id': [(6, 0, [cls.env.ref('Modulo_Odoo.group_panaderia_user').id])],
+            'groups_id': [(6, 0, [group_user.id])],
         })
 
+        group_manager = cls.env.ref('panaderia.group_panaderia_manager', raise_if_not_found=False) or cls.env.ref('Modulo_Odoo.group_panaderia_manager')
         cls.user_manager = cls.env['res.users'].create({
             'name': 'Gerente Maria',
             'login': 'gerente_maria',
             'email': 'maria@deliciasdulces.local',
-            'groups_id': [(6, 0, [cls.env.ref('Modulo_Odoo.group_panaderia_manager').id])],
+            'groups_id': [(6, 0, [group_manager.id])],
         })
 
     def test_01_stock_estado_normal_initial(self):
