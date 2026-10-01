@@ -12,6 +12,15 @@ class TestPanaderiaCategoria(TransactionCase):
         self.CategoriaModel = self.env['panaderia.categoria']
         self.ProductoModel = self.env['panaderia.producto']
 
+        # Clean up any leftover test records from previous non-isolated runs
+        test_codigos = ['PFR', 'BOC', 'TAR', 'TAR2', 'BBC', 'NAV', 'VER']
+        leftover_prods = self.ProductoModel.search([('codigo', 'in', ['BOC-001', 'BOC-002', 'NAV-001'])])
+        if leftover_prods:
+            leftover_prods.unlink()
+        leftover_cats = self.CategoriaModel.search([('codigo', 'in', test_codigos)])
+        if leftover_cats:
+            leftover_cats.unlink()
+
         # Ensure seed categories exist or fetch them
         self.cat_pan = self.CategoriaModel.search([('codigo', '=', 'PAN')], limit=1)
         if not self.cat_pan:
@@ -130,7 +139,7 @@ class TestPanaderiaCategoria(TransactionCase):
             'precio_venta': 6.00,
         })
 
-        with self.assertRaises((IntegrityError, ValidationError, Exception)):
+        with self.assertRaises(Exception):
             with mute_logger('odoo.sql_db'):
                 cat_temp.unlink()
 
