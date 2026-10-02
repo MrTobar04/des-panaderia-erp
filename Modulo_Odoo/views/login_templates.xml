@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Personalización de la pantalla de login con el logotipo y branding de Panadería Delicias Dulces -->
+    <template id="login_layout_panaderia" inherit_id="web.login_layout" name="Panadería Delicias Dulces - Login Layout">
+        <xpath expr="//div[hasclass('card-body')]/div[1]" position="replace">
+            <div t-attf-class="text-center pb-3 border-bottom {{'mb-3' if form_small else 'mb-4'}}">
+                <img src="/panaderia/static/src/img/logo_delicias_dulces.png"
+                     alt="Panadería Delicias Dulces"
+                     style="max-height: 120px; max-width: 100%; width: auto; object-fit: contain; margin-bottom: 8px;"/>
+                <div class="fw-bold" style="color: #6d4c41; font-size: 1.15rem; letter-spacing: -0.2px;">
+                    Panadería Delicias Dulces
+                </div>
+                <span class="badge rounded-pill text-bg-light" style="color: #8d6e63; font-weight: 500; font-size: 0.75rem; border: 1px solid #d7ccc8;">
+                    Sistema ERP &amp; Facturación
+                </span>
+            </div>
+        </xpath>
+    </template>
+</odoo>
