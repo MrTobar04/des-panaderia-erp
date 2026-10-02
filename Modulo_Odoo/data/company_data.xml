@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data noupdate="1">
-        <record id="base.main_company" model="res.company">
-            <field name="name">Panadería Delicias Dulces</field>
-            <field name="logo" type="base64" file="panaderia/static/src/img/logo_delicias_dulces.png"/>
-            <field name="street">Avenida Los Próceres #120, Local 4</field>
-            <field name="city">San Salvador</field>
-            <field name="phone">+(503) 2234-5678</field>
-            <field name="email">contacto@deliciasdulces.com</field>
-        </record>
-    </data>
+    <record id="base.main_company" model="res.company">
+        <field name="name">Panadería Delicias Dulces</field>
+        <field name="logo" type="base64" file="panaderia/static/src/img/logo_delicias_dulces.png"/>
+        <field name="street">Avenida Los Próceres #120, Local 4</field>
+        <field name="city">San Salvador</field>
+        <field name="zip">1101</field>
+        <field name="country_id" ref="base.sv"/>
+        <field name="state_id" eval="False"/>
+        <field name="phone">+(503) 2234-5678</field>
+        <field name="email">contacto@deliciasdulces.com</field>
+        <field name="website">https://panaderia-deliciasdulces.local</field>
+        <field name="vat">0614-010190-102-1</field>
+    </record>
 </odoo>
+
