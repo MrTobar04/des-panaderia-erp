@@ -92,7 +92,13 @@ class PanaderiaReporteDiarioWizard(models.TransientModel):
     def action_print_pdf(self):
         """Ejecuta y retorna la acción de reporte QWeb PDF."""
         self.ensure_one()
-        return self.env.ref('Modulo_Odoo.action_report_resumen_diario').report_action(self)
+        report_action = (
+            self.env.ref('panaderia.action_report_resumen_diario', raise_if_not_found=False)
+            or self.env.ref('Modulo_Odoo.action_report_resumen_diario', raise_if_not_found=False)
+        )
+        if not report_action:
+            raise UserError(_("No se encontró la acción de reporte 'action_report_resumen_diario'."))
+        return report_action.report_action(self, config=False)
 
 
 class ReporteDiarioParser(models.AbstractModel):

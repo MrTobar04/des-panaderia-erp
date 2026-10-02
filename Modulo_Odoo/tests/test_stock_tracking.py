@@ -16,7 +16,7 @@ class TestStockTracking(TransactionCase):
         })
 
         cls.producto = cls.env['panaderia.producto'].create({
-            'name': 'Baguette Tradicional',
+            'name': 'Baguette Tracking Test',
             'codigo': 'BAG-STOCK-01',
             'categoria_id': cls.categoria.id,
             'costo': 0.40,
@@ -74,8 +74,8 @@ class TestStockTracking(TransactionCase):
     def test_04_scenario_3_entrada_produccion(self):
         """Escenario 3: Registro de entrada de producción diaria (+50 unidades)."""
         producto_francés = self.env['panaderia.producto'].create({
-            'name': 'Pan Francés',
-            'codigo': 'PFR-001',
+            'name': 'Pan Francés Tracking Test',
+            'codigo': 'PFR-TRACK-001',
             'categoria_id': self.categoria.id,
             'costo': 0.15,
             'precio_venta': 0.35,
