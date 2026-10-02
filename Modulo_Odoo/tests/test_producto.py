@@ -30,7 +30,7 @@ class TestPanaderiaProducto(TransactionCase):
         })
         self.assertTrue(producto.id, "El producto debe crearse exitosamente.")
         self.assertAlmostEqual(producto.margen_bruto, 1.00, places=2, msg="El margen bruto debe ser 1.50 - 0.50 = 1.00")
-        self.assertAlmostEqual(producto.porcentaje_margen, 66.67, places=2, msg="El porcentaje de margen debe ser (1.00 / 1.50) * 100 = 66.67%")
+        self.assertAlmostEqual(producto.porcentaje_margen, 0.6667, places=2, msg="El porcentaje de margen debe ser (1.00 / 1.50) = 0.6667 (66.67%)")
         self.assertTrue(producto.active, "El producto debe crearse activo por defecto.")
 
     def test_02_invalid_sale_price_zero_raises_validation_error(self):
