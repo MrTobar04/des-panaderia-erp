@@ -29,6 +29,18 @@ class ResPartner(models.Model):
         string='Preferencias / Notas de Panadería',
         help='Alergias alimentarias, panes preferidos, restricciones dietéticas o solicitudes especiales.'
     )
+    dui = fields.Char(
+        string='DUI',
+        copy=True,
+        index=True,
+        help='Documento Único de Identidad salvadoreño del cliente.'
+    )
+    nit = fields.Char(
+        string='NIT',
+        copy=True,
+        index=True,
+        help='Número de Identificación Tributaria salvadoreño.'
+    )
     venta_panaderia_ids = fields.One2many(
         comodel_name='panaderia.venta',
         inverse_name='cliente_id',

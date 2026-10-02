@@ -145,6 +145,13 @@ class PanaderiaVenta(models.Model):
             'target': 'current',
         }
 
+    def action_print_factura_dte(self):
+        """Imprime la factura DTE en PDF vinculada a esta orden de venta."""
+        self.ensure_one()
+        if not self.factura_id:
+            raise UserError("Esta orden de venta no cuenta con una factura asociada para imprimir.")
+        return self.factura_id.action_print_factura_dte()
+
     def write(self, vals):
         """Garantiza la inmutabilidad de la orden de venta una vez confirmada."""
         for order in self:
