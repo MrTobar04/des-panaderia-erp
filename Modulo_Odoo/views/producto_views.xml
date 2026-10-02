@@ -48,7 +48,7 @@
                             <field name="costo" widget="monetary" placeholder="0.00"/>
                             <field name="precio_venta" widget="monetary" placeholder="0.00"/>
                             <field name="margen_bruto" readonly="1" widget="monetary"/>
-                            <field name="porcentaje_margen" readonly="1"/>
+                            <field name="porcentaje_margen" readonly="1" widget="percentage"/>
                         </group>
                     </group>
                     <group string="Control de Inventario y Alertas">
