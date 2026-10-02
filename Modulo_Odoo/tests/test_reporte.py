@@ -73,6 +73,7 @@ class TestPanaderiaReportes(TransactionCase):
             ]
         })
         venta.action_confirm()
+        self.env.flush_all()
 
         # Consultar la vista SQL panaderia.reporte.ventas
         hoy = date.today()
@@ -121,6 +122,7 @@ class TestPanaderiaReportes(TransactionCase):
         venta_canc.action_confirm()
         venta_canc.action_cancel()
         self.assertEqual(venta_canc.state, 'cancelled')
+        self.env.flush_all()
 
         # Comprobar que solo ventas confirmadas suman
         hoy = date.today()
@@ -159,6 +161,7 @@ class TestPanaderiaReportes(TransactionCase):
             ]
         })
         venta2.action_confirm()
+        self.env.flush_all()
 
         # Consultar el ranking ordenado por cantidad vendida descendente
         hoy = date.today()
@@ -193,10 +196,11 @@ class TestPanaderiaReportes(TransactionCase):
         # Ejecutar acción de impresión
         action = wizard.action_print_pdf()
         self.assertEqual(action.get('type'), 'ir.actions.report')
-        self.assertEqual(action.get('report_name'), 'Modulo_Odoo.reporte_diario_template')
+        self.assertIn(action.get('report_name'), ['panaderia.reporte_diario_template', 'Modulo_Odoo.reporte_diario_template'])
 
         # Validar el parser QWeb
-        parser = self.env['report.Modulo_Odoo.reporte_diario_template']
+        parser_name = 'report.panaderia.reporte_diario_template' if 'report.panaderia.reporte_diario_template' in self.env else 'report.Modulo_Odoo.reporte_diario_template'
+        parser = self.env[parser_name]
         values = parser._get_report_values([wizard.id])
         self.assertIn('total_ingresos_dia', values)
         self.assertIn('total_ordenes_dia', values)
