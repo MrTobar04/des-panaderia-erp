@@ -52,8 +52,8 @@ class PanaderiaProducto(models.Model):
         string='% Margen',
         compute='_compute_margenes',
         store=True,
-        digits=(5, 2),
-        help='Margen de ganancia porcentual sobre el precio de venta.'
+        digits=(5, 4),
+        help='Margen de ganancia porcentual sobre el precio de venta (ratio decimal).'
     )
     cantidad_disponible = fields.Float(
         string='Stock Disponible',
@@ -122,7 +122,7 @@ class PanaderiaProducto(models.Model):
         for record in self:
             record.margen_bruto = record.precio_venta - record.costo
             if record.precio_venta > 0.0:
-                record.porcentaje_margen = (record.margen_bruto / record.precio_venta) * 100.0
+                record.porcentaje_margen = record.margen_bruto / record.precio_venta
             else:
                 record.porcentaje_margen = 0.0
 
