@@ -34,6 +34,8 @@
                             states="draft,confirmed" confirm="¿Está seguro de que desea cancelar esta orden de venta?"/>
                     <button name="action_draft" string="Volver a Borrador" type="object"
                             states="cancelled"/>
+                    <button name="action_print_factura_dte" string="Imprimir Factura DTE" type="object"
+                            class="btn-secondary" icon="fa-print" attrs="{'invisible': [('factura_id', '=', False)]}"/>
                     <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,cancelled"/>
                 </header>
                 <sheet>

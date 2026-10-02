@@ -8,6 +8,7 @@
         <field name="arch" type="xml">
             <tree string="Clientes de Panadería">
                 <field name="name" string="Nombre del Cliente" decoration-bf="1"/>
+                <field name="dui" string="DUI" optional="show"/>
                 <field name="phone" string="Teléfono"/>
                 <field name="email" string="Correo Electrónico"/>
                 <field name="city" string="Ciudad"/>
@@ -44,6 +45,8 @@
                     <group>
                         <group string="Identificación y Registro Comercial">
                             <field name="es_cliente_panaderia"/>
+                            <field name="dui" placeholder="Ej. 06202964-6"/>
+                            <field name="nit" placeholder="Ej. 06140803841010"/>
                             <field name="fecha_registro_panaderia" attrs="{'required': [('es_cliente_panaderia', '=', True)]}"/>
                             <field name="total_compras_panaderia" widget="monetary" readonly="1"/>
                             <field name="ventas_panaderia_count" readonly="1"/>
