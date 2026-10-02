@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ================================================================= -->
+    <!-- ACCIÓN DE REPORTE QWEB-PDF: FACTURA ELECTRÓNICA DTE (EL SALVADOR) -->
+    <!-- ================================================================= -->
+    <record id="action_report_factura_dte" model="ir.actions.report">
+        <field name="name">Factura Electrónica DTE (PDF)</field>
+        <field name="model">panaderia.factura</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">panaderia.reporte_factura_dte</field>
+        <field name="report_file">panaderia.reporte_factura_dte</field>
+        <field name="print_report_name">'Factura_DTE_%s' % (object.name or 'Borrador')</field>
+        <field name="binding_model_id" ref="model_panaderia_factura"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <!-- ================================================================= -->
+    <!-- PLANTILLA QWEB PRINCIPAL PARA FACTURA DTE                           -->
+    <!-- ================================================================= -->
+    <template id="reporte_factura_dte">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <div class="article" style="font-family: Arial, Helvetica, sans-serif; font-size: 10px; color: #111; line-height: 1.25; margin: 10px 15px;">
+                    
+                    <!-- Versión Superior Derecha -->
+                    <div style="text-align: right; font-size: 9px; margin-bottom: 2px;">
+                        <span>Versión: 1</span>
+                    </div>
+
+                    <!-- Encabezado de la Empresa -->
+                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 8px;">
+                        <tr>
+                            <td style="width: 25%; vertical-align: middle; text-align: left;">
+                                <img src="/panaderia/static/src/img/logo_delicias_dulces.png" 
+                                     alt="Logo Delicias Dulces" 
+                                     style="max-height: 85px; max-width: 160px; object-fit: contain;"/>
+                            </td>
+                            <td style="width: 75%; vertical-align: middle; text-align: center; padding-left: 10px;">
+                                <div style="font-size: 15px; font-weight: bold; letter-spacing: 0.5px; color: #4a2c11; text-transform: uppercase;">
+                                    DELICIAS DULCES S.A. DE C.V.
+                                </div>
+                                <div style="font-size: 10px; color: #333; margin-top: 2px;">
+                                    <span t-if="o.env.company.street" t-esc="o.env.company.street"/>
+                                    <span t-if="o.env.company.city">, <span t-esc="o.env.company.city"/></span>
+                                    <span t-if="not o.env.company.street and not o.env.company.city">Avenida Los Próceres #120, Local 4, San Salvador, El Salvador</span>
+                                </div>
+                                <div style="font-size: 10px; color: #333; margin-top: 1px;">
+                                    <strong>Correo electrónico:</strong> <span t-esc="o.env.company.email or 'ventas@deliciasdulces.sv'"/> | 
+                                    <strong>Teléfono:</strong> <span t-esc="o.env.company.phone or '2234-5678'"/>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <!-- Título del Documento Tributario -->
+                    <div style="text-align: center; margin: 6px 0 10px 0; border-top: 1px solid #ddd; padding-top: 6px;">
+                        <div style="font-size: 13px; font-weight: bold; letter-spacing: 1px;">
+                            DOCUMENTO TRIBUTARIO ELECTRÓNICO
+                        </div>
+                        <div style="font-size: 12px; font-weight: bold; color: #222; margin-top: 2px;">
+                            FACTURA
+                        </div>
+                    </div>
+
+                    <!-- Bloque de Metadatos DTE y Código QR -->
+                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 10px; font-size: 9.5px;">
+                        <tr>
+                            <!-- Columna izquierda: Identificadores DTE -->
+                            <td style="width: 58%; vertical-align: top; padding-right: 10px;">
+                                <div style="margin-bottom: 4px;">
+                                    <span style="font-weight: bold;">Código de Generación:</span><br/>
+                                    <span style="font-family: monospace; font-size: 10px;" t-esc="o.codigo_generacion or 'N/A'"/>
+                                </div>
+                                <div style="margin-bottom: 4px;">
+                                    <span style="font-weight: bold;">Número de Control:</span>
+                                    <span style="font-family: monospace; font-size: 9.5px;" t-esc="o.numero_control or 'N/A'"/>
+                                </div>
+                                <div style="margin-bottom: 4px;">
+                                    <span style="font-weight: bold;">Sello de Recepción:</span><br/>
+                                    <span style="font-family: monospace; font-size: 9px; word-break: break-all;" t-esc="o.sello_recepcion or 'N/A'"/>
+                                </div>
+                            </td>
+
+                            <!-- Columna central: Código QR -->
+                            <td style="width: 18%; vertical-align: top; text-align: center;">
+                                <img t-att-src="'/report/barcode/?barcode_type=%s&amp;value=%s&amp;width=%s&amp;height=%s' % ('QR', o.qr_data or 'DTE', 100, 100)" 
+                                     style="width: 75px; height: 75px; border: 1px solid #ccc; padding: 2px; background: white;"/>
+                            </td>
+
+                            <!-- Columna derecha: Parámetros del modelo -->
+                            <td style="width: 24%; vertical-align: top; text-align: right; padding-left: 5px; font-size: 9px;">
+                                <div style="margin-bottom: 4px;">
+                                    <strong>Modelo de Facturación:</strong><br/>
+                                    <span t-esc="o.modelo_facturacion or 'Modelo Facturación previo'"/>
+                                </div>
+                                <div style="margin-bottom: 4px;">
+                                    <strong>Tipo de Transmisión:</strong><br/>
+                                    <span t-esc="o.tipo_transmision or 'Transmisión normal'"/>
+                                </div>
+                                <div>
+                                    <strong>Fecha y Hora de Generación:</strong><br/>
+                                    <span t-esc="(o.fecha_dte or o.fecha_emision).strftime('%Y-%m-%d %H:%M:%S') if (o.fecha_dte or o.fecha_emision) else ''"/>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <!-- Cajas Paralelas: EMISOR y RECEPTOR -->
+                    <table style="width: 100%; border-collapse: separate; border-spacing: 6px 0; margin-bottom: 10px;">
+                        <tr>
+                            <!-- Tarjeta Emisor -->
+                            <td style="width: 50%; vertical-align: top; border: 1px solid #bbb; border-radius: 4px; padding: 6px 8px; font-size: 9px;">
+                                <div style="font-weight: bold; border-bottom: 1px solid #ddd; padding-bottom: 2px; margin-bottom: 4px; color: #333; font-size: 10px;">
+                                    EMISOR
+                                </div>
+                                <table style="width: 100%; border-collapse: collapse;">
+                                    <tr>
+                                        <td style="width: 38%; font-weight: bold; padding: 1px 0;">Nombre o razón social:</td>
+                                        <td style="width: 62%; padding: 1px 0;">DELICIAS DULCES S.A. DE C.V.</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-weight: bold; padding: 1px 0;">NIT:</td>
+                                        <td style="padding: 1px 0;">06140803841010</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-weight: bold; padding: 1px 0;">NRC:</td>
+                                        <td style="padding: 1px 0;">1061224</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-weight: bold; padding: 1px 0;">Actividad económica:</td>
+                                        <td style="padding: 1px 0;">ELABORACIÓN DE PRODUCTOS DE PANADERÍA</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-weight: bold; padding: 1px 0; vertical-align: top;">Dirección:</td>
+                                        <td style="padding: 1px 0;">
+                                            <span t-if="o.env.company.street" t-esc="o.env.company.street"/>
+                                            <span t-if="o.env.company.city">, <span t-esc="o.env.company.city"/></span>
+                                            <span t-if="not o.env.company.street and not o.env.company.city">Avenida Los Próceres #120, Local 4, San Salvador, El Salvador</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-weight: bold; padding: 1px 0;">Número de teléfono:</td>
+                                        <td style="padding: 1px 0;" t-esc="o.env.company.phone or '2234-5678'"/>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-weight: bold; padding: 1px 0;">Correo electrónico:</td>
+                                        <td style="padding: 1px 0;" t-esc="o.env.company.email or 'ventas@deliciasdulces.sv'"/>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-weight: bold; padding: 1px 0;">Nombre Comercial:</td>
+                                        <td style="padding: 1px 0;">PANADERÍA DELICIAS DULCES</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-weight: bold; padding: 1px 0;">Tipo de establecimiento:</td>
+                                        <td style="padding: 1px 0;">Casa Matriz / Sucursal</td>
+                                    </tr>
+                                </table>
+                            </td>
+
+                            <!-- Tarjeta Receptor -->
+                            <td style="width: 50%; vertical-align: top; border: 1px solid #bbb; border-radius: 4px; padding: 6px 8px; font-size: 9px;">
+                                <div style="font-weight: bold; border-bottom: 1px solid #ddd; padding-bottom: 2px; margin-bottom: 4px; color: #333; font-size: 10px;">
+                                    RECEPTOR
+                                </div>
+                                <table style="width: 100%; border-collapse: collapse;">
+                                    <tr>
+                                        <td style="width: 38%; font-weight: bold; padding: 1px 0; vertical-align: top;">Nombre o razón social:</td>
+                                        <td style="width: 62%; padding: 1px 0;" t-esc="o.cliente_id.name or 'Consumidor Final'"/>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-weight: bold; padding: 1px 0;">DUI / NIT:</td>
+                                        <td style="padding: 1px 0;" t-esc="o.cliente_id.dui or o.cliente_id.nit or '00000000-0'"/>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-weight: bold; padding: 1px 0;">Correo electrónico:</td>
+                                        <td style="padding: 1px 0;" t-esc="o.cliente_id.email or 'N/A'"/>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-weight: bold; padding: 1px 0; vertical-align: top;">Dirección:</td>
+                                        <td style="padding: 1px 0;">
+                                            <span t-if="o.cliente_id.street" t-esc="o.cliente_id.street"/>
+                                            <span t-if="o.cliente_id.city">, <span t-esc="o.cliente_id.city"/></span>
+                                            <span t-if="not o.cliente_id.street and not o.cliente_id.city">San Salvador, El Salvador</span>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <!-- Tabla del Cuerpo del Documento (Detalle de Productos) -->
+                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 8px; font-size: 8.5px; border: 1px solid #999;">
+                        <thead>
+                            <tr style="background-color: #f7f7f7; text-align: center; border-bottom: 1px solid #999;">
+                                <th style="border: 1px solid #ccc; padding: 3px 2px; width: 3%;">N°</th>
+                                <th style="border: 1px solid #ccc; padding: 3px 2px; width: 6%;">Cantidad</th>
+                                <th style="border: 1px solid #ccc; padding: 3px 2px; width: 6%;">Unidad</th>
+                                <th style="border: 1px solid #ccc; padding: 3px 4px; width: 35%; text-align: left;">Descripción</th>
+                                <th style="border: 1px solid #ccc; padding: 3px 2px; width: 9%;">Precio Unitario</th>
+                                <th style="border: 1px solid #ccc; padding: 3px 2px; width: 8%;">Otros montos no afectos</th>
+                                <th style="border: 1px solid #ccc; padding: 3px 2px; width: 7%;">Descuento por item</th>
+                                <th style="border: 1px solid #ccc; padding: 3px 2px; width: 8%;">Ventas No Sujetas</th>
+                                <th style="border: 1px solid #ccc; padding: 3px 2px; width: 8%;">Ventas Exentas</th>
+                                <th style="border: 1px solid #ccc; padding: 3px 2px; width: 10%;">Ventas Gravadas</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Iteración sobre líneas de venta asociadas -->
+                            <t t-set="item_num" t-value="0"/>
+                            <t t-if="o.linea_ids">
+                                <tr t-foreach="o.linea_ids" t-as="l" style="border-bottom: 1px solid #e0e0e0;">
+                                    <t t-set="item_num" t-value="item_num + 1"/>
+                                    <td style="border: 1px solid #eee; padding: 3px 2px; text-align: center;" t-esc="item_num"/>
+                                    <td style="border: 1px solid #eee; padding: 3px 2px; text-align: center;" t-esc="'%.2f' % l.cantidad"/>
+                                    <td style="border: 1px solid #eee; padding: 3px 2px; text-align: center;">Otra</td>
+                                    <td style="border: 1px solid #eee; padding: 3px 4px; text-align: left;">
+                                        <span style="font-weight: 500;" t-esc="l.producto_id.name"/>
+                                    </td>
+                                    <td style="border: 1px solid #eee; padding: 3px 2px; text-align: right;">$<t t-esc="'%.2f' % l.precio_unitario"/></td>
+                                    <td style="border: 1px solid #eee; padding: 3px 2px; text-align: right;">0.00</td>
+                                    <td style="border: 1px solid #eee; padding: 3px 2px; text-align: right;">0.00</td>
+                                    <td style="border: 1px solid #eee; padding: 3px 2px; text-align: right;">0.00</td>
+                                    <td style="border: 1px solid #eee; padding: 3px 2px; text-align: right;">0.00</td>
+                                    <td style="border: 1px solid #eee; padding: 3px 2px; text-align: right; font-weight: bold;">$<t t-esc="'%.2f' % l.subtotal"/></td>
+                                </tr>
+                            </t>
+                            <!-- Fila por defecto si la factura fue creada directamente sin orden de venta -->
+                            <t t-if="not o.linea_ids">
+                                <tr style="border-bottom: 1px solid #e0e0e0;">
+                                    <td style="border: 1px solid #eee; padding: 3px 2px; text-align: center;">1</td>
+                                    <td style="border: 1px solid #eee; padding: 3px 2px; text-align: center;">1.00</td>
+                                    <td style="border: 1px solid #eee; padding: 3px 2px; text-align: center;">Otra</td>
+                                    <td style="border: 1px solid #eee; padding: 3px 4px; text-align: left;">Consumo de Productos de Panadería</td>
+                                    <td style="border: 1px solid #eee; padding: 3px 2px; text-align: right;">$<t t-esc="'%.2f' % o.monto_total"/></td>
+                                    <td style="border: 1px solid #eee; padding: 3px 2px; text-align: right;">0.00</td>
+                                    <td style="border: 1px solid #eee; padding: 3px 2px; text-align: right;">0.00</td>
+                                    <td style="border: 1px solid #eee; padding: 3px 2px; text-align: right;">0.00</td>
+                                    <td style="border: 1px solid #eee; padding: 3px 2px; text-align: right;">0.00</td>
+                                    <td style="border: 1px solid #eee; padding: 3px 2px; text-align: right; font-weight: bold;">$<t t-esc="'%.2f' % o.monto_total"/></td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+
+                    <!-- Tabla de Resumen y Liquidación Tributaria -->
+                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 8px; font-size: 9px;">
+                        <tr>
+                            <td style="width: 50%; vertical-align: top; padding-right: 15px;">
+                                <!-- Espacio reservado para sello y firmas -->
+                            </td>
+                            <td style="width: 50%; vertical-align: top;">
+                                <table style="width: 100%; border-collapse: collapse; border: 1px solid #bbb;">
+                                    <tr style="border-bottom: 1px solid #eee;">
+                                        <td style="padding: 2px 6px; text-align: right; font-weight: 500;">Sumatoria de ventas:</td>
+                                        <td style="padding: 2px 6px; text-align: right; width: 30%; font-weight: bold;">$<t t-esc="'%.2f' % o.monto_total"/></td>
+                                    </tr>
+                                    <tr style="border-bottom: 1px solid #eee;">
+                                        <td style="padding: 2px 6px; text-align: right;">Monto global Desc., Rebajas y otros a ventas no sujetas:</td>
+                                        <td style="padding: 2px 6px; text-align: right;">0.00</td>
+                                    </tr>
+                                    <tr style="border-bottom: 1px solid #eee;">
+                                        <td style="padding: 2px 6px; text-align: right;">Monto global Desc., Rebajas y otros a ventas Exentas:</td>
+                                        <td style="padding: 2px 6px; text-align: right;">0.00</td>
+                                    </tr>
+                                    <tr style="border-bottom: 1px solid #eee;">
+                                        <td style="padding: 2px 6px; text-align: right;">Monto global Desc., Rebajas y otros a ventas gravadas:</td>
+                                        <td style="padding: 2px 6px; text-align: right;">0.00</td>
+                                    </tr>
+                                    <tr style="border-bottom: 1px solid #eee; background-color: #fafafa;">
+                                        <td style="padding: 2px 6px; text-align: right; font-weight: bold;">Sub-Total:</td>
+                                        <td style="padding: 2px 6px; text-align: right; font-weight: bold;">$<t t-esc="'%.2f' % o.monto_total"/></td>
+                                    </tr>
+                                    <tr style="border-bottom: 1px solid #eee;">
+                                        <td style="padding: 2px 6px; text-align: right;">IVA Retenido:</td>
+                                        <td style="padding: 2px 6px; text-align: right;">0.00</td>
+                                    </tr>
+                                    <tr style="border-bottom: 1px solid #eee;">
+                                        <td style="padding: 2px 6px; text-align: right;">Retención Renta:</td>
+                                        <td style="padding: 2px 6px; text-align: right;">0.00</td>
+                                    </tr>
+                                    <tr style="border-bottom: 1px solid #eee;">
+                                        <td style="padding: 2px 6px; text-align: right; font-weight: bold;">Monto Total de la Operación:</td>
+                                        <td style="padding: 2px 6px; text-align: right; font-weight: bold;">$<t t-esc="'%.2f' % o.monto_total"/></td>
+                                    </tr>
+                                    <tr style="border-bottom: 1px solid #eee;">
+                                        <td style="padding: 2px 6px; text-align: right;">Total Otros Montos No Afectos:</td>
+                                        <td style="padding: 2px 6px; text-align: right;">0.00</td>
+                                    </tr>
+                                    <tr style="background-color: #f0f0f0; border-top: 1px solid #999;">
+                                        <td style="padding: 3px 6px; text-align: right; font-size: 10px; font-weight: bold; color: #111;">Total a Pagar:</td>
+                                        <td style="padding: 3px 6px; text-align: right; font-size: 11px; font-weight: bold; color: #111;">$<t t-esc="'%.2f' % o.monto_total"/></td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <!-- Bloque Final: Total en Letras, Condición y Observaciones -->
+                    <div style="border: 1px solid #bbb; border-radius: 4px; padding: 6px 8px; font-size: 9px; margin-top: 6px; background-color: #fff;">
+                        <div style="margin-bottom: 3px;">
+                            <strong>Valor en Letras:</strong>
+                            <span style="font-weight: bold; text-transform: uppercase;" t-esc="o.monto_letras or ''"/>
+                        </div>
+                        <div style="margin-bottom: 3px;">
+                            <strong>Condición de la Operación:</strong>
+                            <span style="text-transform: uppercase;" t-esc="dict(o._fields['condicion_operacion'].selection).get(o.condicion_operacion, 'CONTADO')"/>
+                        </div>
+                        <div>
+                            <strong>Observaciones:</strong>
+                            <span>Documento Tributario Electrónico emitido de conformidad con las especificaciones técnicas del Ministerio de Hacienda de El Salvador.</span>
+                        </div>
+                    </div>
+
+                </div>
+            </t>
+        </t>
+    </template>
+</odoo>

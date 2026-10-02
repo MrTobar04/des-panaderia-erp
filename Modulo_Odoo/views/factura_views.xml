@@ -21,6 +21,13 @@
                             attrs="{'invisible': [('state', '!=', 'pending')]}"
                             confirm="¿Está seguro de que desea cancelar esta factura?"/>
 
+                    <!-- Botón Imprimir Factura DTE -->
+                    <button name="action_print_factura_dte"
+                            string="Imprimir Factura DTE"
+                            type="object"
+                            class="btn-primary"
+                            icon="fa-print"/>
+
                     <!-- Barra de estado -->
                     <field name="state" widget="statusbar" statusbar_visible="pending,paid"/>
                 </header>
@@ -53,6 +60,18 @@
                         <group string="Detalles de Cobro">
                             <field name="monto_total" attrs="{'readonly': [('state', 'in', ('paid', 'cancelled'))]}"/>
                             <field name="metodo_pago" attrs="{'readonly': [('state', 'in', ('paid', 'cancelled'))]}"/>
+                        </group>
+                    </group>
+                    <group string="Datos Fiscales DTE (Hacienda El Salvador)">
+                        <group>
+                            <field name="codigo_generacion" readonly="1"/>
+                            <field name="numero_control" readonly="1"/>
+                            <field name="sello_recepcion" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="fecha_dte" readonly="1"/>
+                            <field name="condicion_operacion"/>
+                            <field name="monto_letras" readonly="1"/>
                         </group>
                     </group>
                 </sheet>

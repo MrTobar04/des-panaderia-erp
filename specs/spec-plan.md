@@ -19,6 +19,7 @@ Este documento define la descomposición jerárquica y el mapa de trazabilidad d
 | **2. Ventas** | `SPEC-2.1.1` | Registro y Proceso de Ventas Esencial | [`specs/2-sales/2.1-sales-orders/2.1.1-order-management/spec.md`](specs/2-sales/2.1-sales-orders/2.1.1-order-management/spec.md) | Implementado |
 | **3. Clientes** | `SPEC-3.1.1` | Extensión y Registro de Clientes | [`specs/3-customers/3.1-partner-extension/3.1.1-bakery-customer-management/spec.md`](file:///d:/UDB/CICLO-10-2026/DES/LAB/Desafio%203/des-panaderia-erp/specs/3-customers/3.1-partner-extension/3.1.1-bakery-customer-management/spec.md) | Listo |
 | **4. Facturación** | `SPEC-4.1.1` | Generación de Facturas Simples | [`specs/4-invoicing/4.1-customer-invoices/4.1.1-simple-invoice-generation/spec.md`](specs/4-invoicing/4.1-customer-invoices/4.1.1-simple-invoice-generation/spec.md) | Implementado |
+| **4. Facturación** | `SPEC-4.1.2` | Generación de Factura PDF DTE El Salvador | [`specs/4-invoicing/4.1-customer-invoices/4.1.2-dte-invoice-pdf-generation/spec.md`](specs/4-invoicing/4.1-customer-invoices/4.1.2-dte-invoice-pdf-generation/spec.md) | Listo |
 | **5. Reportes** | `SPEC-5.1.1` | Reportes Operativos Diarios y Alertas | [`specs/5-reports/5.1-operational-reports/5.1.1-daily-sales-and-stock-reports/spec.md`](file:///d:/UDB/CICLO-10-2026/DES/LAB/Desafio%203/des-panaderia-erp/specs/5-reports/5.1-operational-reports/5.1.1-daily-sales-and-stock-reports/spec.md) | Listo |
 
 ---

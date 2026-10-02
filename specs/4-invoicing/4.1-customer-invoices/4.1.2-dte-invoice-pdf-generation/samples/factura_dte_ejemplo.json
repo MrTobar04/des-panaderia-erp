@@ -1,0 +1,116 @@
+{
+    "identificacion": {
+      "version": 1,
+      "ambiente": "01",
+      "tipoDte": "01",
+      "numeroControl": "DTE-01-M001P021-000000000289936",
+      "codigoGeneracion": "4D042782-DC9B-4709-876C-11EC48CD3900",
+      "tipoModelo": 1,
+      "tipoOperacion": 1,
+      "fecEmi": "2026-08-15",
+      "horEmi": "11:16:48",
+      "tipoMoneda": "USD",
+      "tipoContingencia": null,
+      "motivoContin": null
+    },
+    "documentoRelacionado": null,
+    "emisor": {
+      "nit": "06140803841010",
+      "nrc": "1061224",
+      "nombre": "UNIVERSIDAD DON BOSCO",
+      "codActividad": "85499",
+      "descActividad": "ENSENANZA FORMAL",
+      "nombreComercial": "UNIVERSIDAD DON BOSCO",
+      "tipoEstablecimiento": "01",
+      "telefono": "22518241",
+      "correo": "sistemas@udb.edu.sv",
+      "codEstableMH": "0000",
+      "codEstable": "0000",
+      "codPuntoVentaMH": "0000",
+      "codPuntoVenta": "000000000000000",
+      "direccion": {
+        "departamento": "06",
+        "municipio": "23",
+        "complemento": "Calle a Plan del Pino Km 1 1/2. Ciudadela Don Bosco, Soyapango, El Salvador, CA."
+      }
+    },
+    "receptor": {
+      "tipoDocumento": "13",
+      "numDocumento": "06202964-6",
+      "nrc": null,
+      "nombre": "[HO221200  ] Alejandro Javier Hernández Orellana",
+      "codActividad": null,
+      "descActividad": null,
+      "direccion": {
+        "departamento": "00",
+        "municipio": "00",
+        "complemento": "Urb. El limon, pje 15, pol 30, casa # 3"
+      },
+      "telefono": null,
+      "correo": "pedrada914@gmail.com"
+    },
+    "ventaTercero": null,
+    "otrosDocumentos": null,
+    "cuerpoDocumento": [
+      {
+        "numItem": 1,
+        "descripcion": "CUOTA - 03",
+        "codigo": "3604",
+        "uniMedida": 99,
+        "cantidad": 1.0,
+        "tipoItem": 1,
+        "codTributo": null,
+        "numeroDocumento": null,
+        "precioUni": 79.0,
+        "montoDescu": 0.0,
+        "ventaNoSuj": 0.0,
+        "ventaExenta": 79.0,
+        "ventaGravada": 0.0,
+        "noGravado": 0.0,
+        "tributos": null,
+        "psv": 0.0,
+        "ivaItem": 0.0
+      }
+    ],
+    "resumen": {
+      "totalNoSuj": 0.0,
+      "totalExenta": 79.0,
+      "totalGravada": 0.0,
+      "subTotalVentas": 79.0,
+      "descuNoSuj": 0.0,
+      "descuExenta": 0.0,
+      "descuGravada": 0.0,
+      "porcentajeDescuento": 0.0,
+      "totalDescu": 0.0,
+      "tributos": null,
+      "subTotal": 79.0,
+      "totalIva": 0.0,
+      "ivaRete1": 0.0,
+      "reteRenta": 0.0,
+      "montoTotalOperacion": 79.0,
+      "totalNoGravado": 0.0,
+      "totalPagar": 79.0,
+      "totalLetras": "SETENTA Y NUEVE CON 00/100",
+      "saldoFavor": 0.0,
+      "condicionOperacion": 1,
+      "pagos": [
+        {
+          "codigo": "99",
+          "montoPago": 79.0,
+          "referencia": null,
+          "periodo": null,
+          "plazo": null
+        }
+      ],
+      "numPagoElectronico": null
+    },
+    "extension": {
+      "nombEntrega": null,
+      "docuEntrega": null,
+      "nombRecibe": null,
+      "docuRecibe": null,
+      "observaciones": null,
+      "placaVehiculo": null
+    },
+    "apendice": null
+  }

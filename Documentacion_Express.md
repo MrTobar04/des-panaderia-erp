@@ -64,18 +64,29 @@ Extiende el modelo nativo de contactos y socios comerciales de Odoo (`res.partne
 
 ---
 
-## 4. Facturación Simple
+## 4. Facturación Simple y Documento Tributario Electrónico (DTE)
 
 ### Descripción General
-Provee un mecanismo simplificado de emisión, seguimiento y cobranza de comprobantes fiscales/facturas asociadas a las órdenes de venta.
+Provee un mecanismo integral de emisión, seguimiento y cobranza de comprobantes fiscales impresos y digitales bajo la normativa del **Documento Tributario Electrónico (DTE - Factura Tipo 01)** del Ministerio de Hacienda de El Salvador.
 
 ### Funcionalidades Clave
-* **Generación Directa desde Venta:** Botón de acción en la orden de venta confirmada que transfiere automáticamente cliente, fecha, líneas y montos hacia una nueva factura.
-* **Secuencia y Numeración Automática:** Asignación correlativa y única de folios de factura mediante secuencias internas de Odoo (ej. `FAC-2026-0001`).
+* **Generación Directa desde Venta:** Al confirmar la orden de venta, el sistema genera automáticamente la factura vinculada con desglose de productos y asignación inmediata de identificadores fiscales.
+* **Secuencia y Numeración Oficial DTE:**
+  * Folio interno correlativo (`FAC-XXXX`).
+  * **Código de Generación:** Identificador universal único UUID v4 oficial en mayúsculas (ej. `4D042782-DC9B-4709-876C-11EC48CD3900`).
+  * **Número de Control MH:** Formato legal salvadoreño `DTE-01-M001P001-` con correlativo de 15 dígitos.
+  * **Sello de Recepción Fiscal:** Cadena de seguridad criptográfica de 40 caracteres.
+* **Emisión de Factura PDF (QWeb Report):**
+  * **Logotipo Oficial:** Encabezado con el isotipo e imagotipo de *"Delicias Dulces - PANADERÍA"*.
+  * **Datos del Emisor:** Razón Social (DELICIAS DULCES S.A. DE C.V.), NIT, NRC, actividad económica y dirección comercial en San Salvador, El Salvador.
+  * **Cuerpo de Ítems y Liquidación Fiscal:** Tabla detallada de productos, precios unitarios, ventas gravadas/exentas/no sujetas, subtotal e IVA.
+  * **Código QR Escaneable:** Código bidimensional nativo con URL de consulta pública ante el Ministerio de Hacienda.
+  * **Total en Letras:** Conversión automática a palabras en español (ej. *SETENTA Y NUEVE CON 00/100*).
+* **Impresión Bajo Demanda:** Botones "Imprimir Factura DTE" disponibles en las vistas formulario tanto de la factura como de la orden de venta.
 * **Flujo y Gestión de Estados:**
-  * `Pendiente`: Comprobante emitido a la espera del cobro.
-  * `Pagada`: Registro de la recepción conforme del pago (efectivo, tarjeta o transferencia).
-  * `Cancelada`: Anulación del comprobante en caso de rectificación o devolución.
+  * `Pendiente`: Comprobante emitido con DTE generado, a la espera del cobro en mostrador.
+  * `Pagada`: Registro de pago conforme (efectivo, tarjeta o transferencia) con fecha/hora de cobro e inmutabilidad fiscal.
+  * `Cancelada`: Anulación del comprobante protegida por permisos de administrador.
 
 ---
 
